@@ -1,0 +1,56 @@
+{
+        "users":[
+            {
+                "id":101,
+                "name":"user0",
+                "feeders":[
+               {
+                   "feederId":90,
+                   "labels":"home, garage",
+                   "stateLabels":"true, false",
+                   "feederType":"normal",
+                   "timeTable":"time1",
+                   "capacity":90,
+                   "fillExternally":80,
+                   "fillInternally":43
+               },
+               {
+                   "feederId":900,
+                   "labels":"hom",
+                   "stateLabels":"false",
+                   "feederType":"spiral",
+                   "timeTable":"time1",
+                   "capacity":90,
+                   "fillExternally":80,
+                   "fillInternally":43
+               }
+                 ]
+                 },
+                 {
+                "id":101,
+                "name":"user0",
+                "feeders":[
+               {
+                   "feederId":90,
+                   "labels":"home, garage",
+                   "stateLabels":"true, false",
+                   "feederType":"normal",
+                   "timeTable":"time1",
+                   "capacity":90,
+                   "fillExternally":80,
+                   "fillInternally":43
+               },
+               {
+                   "feederId":900,
+                   "labels":"hom",
+                   "stateLabels":"false",
+                   "feederType":"spiral",
+                   "timeTable":"time1",
+                   "capacity":90,
+                   "fillExternally":80,
+                   "fillInternally":43
+               }
+                 ]
+                 }
+        ]
+       }
