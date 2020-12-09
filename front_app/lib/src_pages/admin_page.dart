@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:front_app/src_pages/user_page.dart';
 import 'package:http/http.dart' as http;
+import '../Entities/User.dart';
+import '../Entities/Feeder.dart';
 
 class AdminPage extends StatelessWidget {
   @override
@@ -24,25 +25,6 @@ class AdminPage extends StatelessWidget {
 class AdminListView extends StatefulWidget {
   @override
   _AdminListViewState createState() => _AdminListViewState();
-}
-
-class User {
-  List<Feeder> feeders;
-  int userId;
-  String name;
-  //List<String> timeTables;
-
-  User({this.feeders, this.userId, this.name});
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    var list = json['feeders'] as List;
-    print(list);
-    return User(
-        feeders: list.map((i) => Feeder.fromJson(i)).toList(),
-        userId: json["id"] as int,
-        //timeTables: json["timeTables"] as List<String>,
-        name: (json["name"] as String).toString());
-  }
 }
 
 class _AdminListViewState extends State<AdminListView> {

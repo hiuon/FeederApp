@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:front_app/src_pages/admin_page.dart';
 import 'package:front_app/src_pages/user_page.dart';
+import '../Entities/UserLogin.dart';
 import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
@@ -76,20 +77,6 @@ class _LoginPageState extends State<LoginPage> {
 class UserListView extends StatefulWidget {
   @override
   _UserListViewState createState() => _UserListViewState();
-}
-
-class User {
-  int id;
-  String name;
-
-  User({this.id, this.name});
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json["id"] as int,
-      name: json["name"] as String,
-    );
-  }
 }
 
 class _UserListViewState extends State<UserListView> {

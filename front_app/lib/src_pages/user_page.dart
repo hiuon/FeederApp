@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../Entities/Feeder.dart';
 
 class UserPage extends StatelessWidget {
   final int userId;
@@ -31,45 +32,6 @@ class FeederListView extends StatefulWidget {
   FeederListView(this.userId);
   @override
   _FeederListViewState createState() => _FeederListViewState(userId);
-}
-
-class Feeder {
-  int feederId;
-  int userId;
-  List<String> stateLabels_;
-  List<bool> stateLabels;
-  List<String> labels;
-  String feederType;
-  String timeTable;
-  int capacity;
-  int filledInernally;
-  int filledExternally;
-
-  Feeder(
-      {this.feederId,
-      this.labels,
-      this.stateLabels_,
-      this.feederType,
-      this.stateLabels,
-      this.timeTable,
-      this.capacity,
-      this.filledExternally,
-      this.filledInernally});
-
-  factory Feeder.fromJson(Map<String, dynamic> json) {
-    print("////////");
-    print(json);
-    return Feeder(
-        feederId: json["feederId"] as int,
-        labels: (json["labels"] as String).split("__"),
-        //stateLabels_: (json["labelsState"] as String).split("__"),
-        feederType: (json["feederType"] as String).toString(),
-        timeTable: (json["timeTable"] as String).toString(),
-        capacity: json["capacity"] as int,
-        filledExternally: json["filledExternally"] as int,
-        filledInernally: json["filledInternally"] as int,
-        stateLabels: new List<bool>());
-  }
 }
 
 class _FeederListViewState extends State<FeederListView> {
