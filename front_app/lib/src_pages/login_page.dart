@@ -1,12 +1,8 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:front_app/src_pages/admin_page.dart';
 import 'package:front_app/src_pages/user_page.dart';
 import '../Entities/UserLogin.dart';
-import 'package:http/http.dart' as http;
+import '../Service/http_service.dart';
 
 class LoginPage extends StatefulWidget {
   Widget build(BuildContext context) {
@@ -23,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final title = 'Login Page';
-    _UserListViewState();
+    //_UserListViewState();
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -80,57 +76,57 @@ class UserListView extends StatefulWidget {
 }
 
 class _UserListViewState extends State<UserListView> {
-  List<User> _body;
+  Future<List<UserLogin>> _body;
 
-  _UserListViewState() {
-    http.get("http://localhost:5000").then((response) {
-      var data = json.decode(response.body);
-      var rest = data["users"] as List;
-      _body = rest.map<User>((json) => User.fromJson(json)).toList();
-      print(this._body);
-      setState(() {});
-    });
+  @override
+  void initState() {
+    super.initState();
+    _body = HttpClientFeed.getUserLogin();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_body == null) {
-      return Container();
-    }
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: _body.length,
-      itemBuilder: (context, index) {
-        return Container(
-          width: 50.0,
-          height: 100,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                child: Image.asset(
-                  'images/user.png',
-                  height: 50,
-                  fit: BoxFit.cover,
+    return FutureBuilder(
+        future: _body,
+        builder: (context, snapshot) {
+          if (snapshot.hasData == null) {
+            return Container();
+          }
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              return Container(
+                width: 50.0,
+                height: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Image.asset(
+                        'images/user.png',
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    FlatButton(
+                      child: Text(snapshot.data[index].name), //userName
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => new UserPage(
+                                    userId: snapshot.data[index].id,
+                                    name: snapshot.data[index].name,
+                                  )),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ),
-              FlatButton(
-                child: Text(_body[index].name), //userName
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) => new UserPage(
-                              userId: _body[index].id,
-                              name: _body[index].name,
-                            )),
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
+        });
   }
 }

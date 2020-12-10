@@ -1,7 +1,6 @@
 class Feeder {
   int feederId;
   int userId;
-  //List<String> stateLabels_;
   List<bool> stateLabels;
   List<String> labels;
   String feederType;
@@ -13,7 +12,6 @@ class Feeder {
   Feeder(
       {this.feederId,
       this.labels,
-      //this.stateLabels_,
       this.feederType,
       this.stateLabels,
       this.timeTable,
@@ -27,13 +25,24 @@ class Feeder {
     return Feeder(
         feederId: json["feederId"] as int,
         labels: (json["labels"] as String).split("__"),
-        //stateLabels_: (json["labelsState"] as String).split("__"),
         feederType: (json["feederType"] as String).toString(),
         timeTable: (json["timeTable"] as String).toString(),
         capacity: json["capacity"] as int,
         filledExternally: json["filledExternally"] as int,
         filledInernally: json["filledInternally"] as int,
-        stateLabels: fromStringToBool((json["labelState"] as String).split("__"));
+
+        //stateLabels:
+        //    fromStringToBool((json["labelState"] as String).split("__"))
+
+        stateLabels: onlyFalse((json["labels"] as String).split("__").length));
+  }
+
+  static List<bool> onlyFalse(int length) {
+    List<bool> stateL = new List<bool>();
+    for (int i = 0; i < length; i++) {
+      stateL.add(false);
+    }
+    return stateL;
   }
 
   static List<bool> fromStringToBool(List<String> state) {
@@ -41,8 +50,7 @@ class Feeder {
     for (String i in state) {
       if (i == "0") {
         stateL.add(false);
-      }
-      else{
+      } else {
         stateL.add(true);
       }
     }
