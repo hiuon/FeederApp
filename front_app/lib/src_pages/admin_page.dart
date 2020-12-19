@@ -1,11 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../Entities/User.dart';
 import '../Entities/Feeder.dart';
+import '../Service/http_service.dart';
 
-class AdminPage extends StatelessWidget {
+class AdminPage extends StatefulWidget {
+  Widget build(BuildContext context) {
+    return AdminPage();
+  }
+
+  State<StatefulWidget> createState() {
+    return _AdminPageState();
+  }
+}
+
+class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -38,6 +50,10 @@ class _AdminListViewState extends State<AdminListView> {
       users = new List<User>();
       print(data);
       users = rest.map<User>((json) => User.fromJson(json)).toList();
+      //проверка что просто все будет работать
+      for (User i in users) {
+        i.userLogs = "test information";
+      }
       setState(() {});
     });
   }
@@ -189,32 +205,11 @@ class _AdminListViewState extends State<AdminListView> {
                   child: Text("     Удалить\nПользователя"),
                   color: Colors.blue,
                   onPressed: () {
-                    http
-                        .delete(
-                            "http://localhost:5000/users/?userId=${users[index].userId}")
-                        .then((response) {});
-                    http.get("http://localhost:5000/users").then((response) {
-                      var data = json.decode(response.body);
-                      var rest = data["users"] as List;
-                      print(response.body);
-                      users = new List<User>();
-                      users = rest
-                          .map<User>((json) => User.fromJson(json))
-                          .toList();
+                    HttpClientFeed.deleteUser(users[index].userId)
+                        .whenComplete(() {
                       setState(() {});
-                    });
-
-                    http.get("http://localhost:5000/users").then((response) {
-                      var data = json.decode(response.body);
-                      var rest = data["users"] as List;
-                      print(response.body);
-                      users = new List<User>();
-                      users = rest
-                          .map<User>((json) => User.fromJson(json))
-                          .toList();
-                      setState(() {});
-                    });
-                    setState(() {});
+                    }).then((value) => users = value);
+                    //HttpClientFeed.getUsers().then((value) => users = value);
                   },
                 ),
               ),
@@ -351,7 +346,16 @@ class _AdminListViewState extends State<AdminListView> {
             child: FlatButton(
               child: Text("Просмотреть лог"),
               color: Colors.blue,
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("ЛОГ"),
+                        content: Text(users[i].userLogs),
+                      );
+                    });
+              },
             ),
           ),
           Container(
@@ -389,33 +393,3 @@ class _AdminListViewState extends State<AdminListView> {
     return rows;
   }
 }
-
-/*addUser(BuildContext context, String name) {
-  TextEditingController _c;
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-            child: SizedBox(
-          height: 100,
-          width: 100,
-          child: Column(
-            children: [
-              TextField(
-                decoration: InputDecoration(hintText: "Имя пользователя"),
-                controller: _c,
-              ),
-              FlatButton(
-                child: Text("Добавить"),
-                color: Colors.blue,
-                onPressed: () {
-                  name = _c.text;
-                  print(name);
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          ),
-        ));
-      });
-}*/

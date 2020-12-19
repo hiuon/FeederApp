@@ -96,35 +96,38 @@ class _UserListViewState extends State<UserListView> {
             scrollDirection: Axis.vertical,
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
-              return Container(
-                width: 50.0,
-                height: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Image.asset(
-                        'images/user.png',
-                        height: 50,
-                        fit: BoxFit.cover,
+              if (snapshot.data.length == null) {
+                return Container();
+              } else
+                return Container(
+                  width: 50.0,
+                  height: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Image.asset(
+                          'images/user.png',
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    FlatButton(
-                      child: Text(snapshot.data[index].name), //userName
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => new UserPage(
-                                    userId: snapshot.data[index].id,
-                                    name: snapshot.data[index].name,
-                                  )),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
+                      FlatButton(
+                        child: Text(snapshot.data[index].name), //userName
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new UserPage(
+                                      userId: snapshot.data[index].id,
+                                      name: snapshot.data[index].name,
+                                    )),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
             },
           );
         });

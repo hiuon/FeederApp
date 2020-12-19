@@ -24,4 +24,20 @@ class HttpClientFeed {
       return null;
     }
   }
+
+  static Future<List<User>> getUsers() async {
+    final response = await http.get(url + "/users");
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var rest = data["users"] as List;
+      return rest.map<User>((json) => User.fromJson(json)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  static Future<List<User>> deleteUser(int userId) async {
+    final response = await http.delete(url + "/users/?userId=$userId");
+    return getUsers();
+  }
 }
