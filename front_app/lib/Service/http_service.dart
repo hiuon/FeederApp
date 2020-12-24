@@ -64,20 +64,8 @@ class HttpClientFeed {
       for (int i = 0; i < feeders.length; i++) {
         feeders[i].userId = userId;
         print(feeders[i].labels);
-        if (feeders[i].labels[0] != '') {
-          feeders[i].labelsState = new List<bool>(feeders[i].labels.length);
-          print(feeders[i].labels.length);
-          for (int j = 0; j < feeders[i].labels.length; j++) {
-            /*if (feeders[i].labelsState_[j] == "false") {
-              feeders[i].labelsState.add(false);
-            } else {
-              feeders[i].labelsState.add(true);
-            }*/
-            feeders[i].labelsState[j] = false;
-          }
-        } else {
+        if (feeders[i].labels[0] == '') {
           feeders[i].labelsState = new List<bool>();
-          //feeders[i].labelsState_ = new List<String>();
           feeders[i].labels = new List<String>();
         }
       }

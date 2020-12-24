@@ -101,14 +101,31 @@ class Feeder {
   }
 
   static String changeLabel(Feeder feeder) {
+    StringBuffer newLabels = new StringBuffer();
+    StringBuffer newLabelsState = new StringBuffer();
+    if (feeder.labels.isEmpty != true) {
+      for (int i = 0; i < feeder.labels.length; i++) {
+        if (i == feeder.labels.length - 1) {
+          newLabels.write(feeder.labels[i]);
+          newLabelsState.write(feeder.labelsState[i].toString());
+        } else {
+          newLabels.write(feeder.labels[i] + "__");
+          newLabelsState.write(feeder.labelsState[i].toString() + "__");
+        }
+      }
+    }
+    if (newLabels.toString() == "__") {
+      newLabels = new StringBuffer();
+      newLabelsState = new StringBuffer();
+    }
     return "feederId=" +
         feeder.feederId.toString() +
         "&userId=" +
         feeder.userId.toString() +
         "&labels=" +
-        feeder.labels.toString() +
+        newLabels.toString() +
         "&labelsState=" +
-        feeder.labelsState.toString() +
+        newLabelsState.toString() +
         "&feederType=" +
         feeder.feederType +
         "&timeTable=" +

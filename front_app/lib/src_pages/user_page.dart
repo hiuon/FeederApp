@@ -108,7 +108,8 @@ class _FeederListViewState extends State<FeederListView> {
                                   !feeders[index].labelsState[_index];
                             });
                             HttpClientFeed.changeFeeder(
-                                Feeder.changeLabel(feeders[index]), userId);
+                                    Feeder.changeLabel(feeders[index]), userId)
+                                .then((value) => feeders = value);
                           },
                           children: showToggle(feeders[index].labels),
                         )
