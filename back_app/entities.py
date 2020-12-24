@@ -10,6 +10,58 @@ db_user = 'postgres'
 db_password = 'admin'
 db_host = 'localhost'
 
+#тут время нужно пофиксить
+timings = ['8:00', '11:00', '13:00', '16:00', '19:00', '22:00']
+
+def logToRow(log):
+	row = str(log['logId'])
+	row += '  '
+	row += log['logType']
+	row += '  '
+	row += log['logMessage']
+	row += '  '
+	row += str(log['userId'])
+	row += '  '
+	row += str(log['feederId'])
+	row += '  '
+	row += log['timeStamp']
+	return row
+
+def decodeTimeTable(value):
+	values = value.split('__')
+	value = ''
+	result = ''
+	for value, index in zip(values, range(len(values))):
+		print(value, index)
+		if value=='1':
+			result += timings[index] + ' '
+
+	return result
+
+def timeTableToFile(value):
+	with open('exportFile.txt','w+') as f:
+		f.write(decodeTimeTable(value))
+		f.close()
+
+def fileToTimetable(filepath):
+	with open(filepath, 'r') as f:
+		values = f.read().split(" ")
+		timeTable = ''
+		
+		for timing in timings:
+			if timing in values:
+				timeTable += '1__'
+			else:
+				timeTable += '0__'
+		timeTable = timeTable[:-2]
+	return timeTable
+
+def logsToFile(logs):
+	with open('exportFile.txt','w+') as f:
+		for log in logs:
+			f.write(logToRow(log)+'\n')
+		f.close()
+
 def datetimeToStr(datetime):
 	result = ''
 	result += datetime[0][datetime[0].find('(')+1:]
@@ -86,10 +138,6 @@ def log(logType, logMessage, userId=None, feederId=None):
 	cursor.execute(querry) 
 	cursor.close()
 	conn.close()
-
-	
-
-
 
 class Feeder:
 	feederId = 0
@@ -226,6 +274,37 @@ class Feeder:
 		cursor.close()
 		conn.close()
 		log("FEEDER DELETE", "FEEDER DELETED", self.userId, self.feederId)
+
+	def getAllFeederLogs(self):
+		conn = psycopg2.connect(dbname=db_name, user=db_user, 
+		password=db_password, host=db_host)
+
+		cursor = conn.cursor()
+		conn.autocommit = True
+		cursor.execute('SELECT * FROM logs WHERE logs.feederid = '+str(self.feederId)+';')
+		# cursor.execute('SELECT * FROM logs;')
+
+		logs = []
+
+		for row in cursor:
+			fields = str(row)[1:-1].split(', ')
+			log = {
+				'logId': int(fields[0]),
+				'logType': str(fields[1][1:-1]),
+				'logMessage': str(fields[2][1:-1]),
+				'userId': safeIntForDB(fields[3]),
+				'feederId': safeIntForDB(fields[4]),
+				'timeStamp': datetimeToStr(fields[-7:])
+			}
+			logs.append(log)
+
+		cursor.close()
+		conn.close()
+
+		return logs
+
+	def getTimeTable(self):
+		return self.timeTable
 
 
 class User:

@@ -1,7 +1,7 @@
 import flask
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory
 from flask_cors import CORS, cross_origin
-from entities import Feeder, User #TimeTable
+from entities import Feeder, User, logsToFile, timeTableToFile #TimeTable
 import entities
 import json
 
@@ -106,6 +106,7 @@ def api_userLogs():
 
     return "User not found"
 
+
 @app.route('/feeders/', methods=['GET', 'POST', 'DELETE'])
 def api_UserFeeders():
   global users
@@ -190,3 +191,63 @@ def api_UserFeeders():
         user.removeFeederById(feederId)
         return "feeder deleted"
     return "User not found"
+
+@app.route('/feeders/logs', methods=['GET'])
+def api_FeederLogs():
+  global users
+
+  if 'userId' in request.args and 'feederId' in request.args:
+    userId = int(request.args['userId'])
+    feederId = int(request.args['feederId'])
+  else:
+    return "Error: No id field provided. Please specify an id."
+
+  if request.method == 'GET':
+    for user in users:
+      if (user.getUserId()==userId):
+        return jsonify(user.getFeederById(feederId).getAllFeederLogs())
+    return "Feeder or user not found"
+
+@app.route('/exportLogs', methods=['GET'])
+def s():
+  global users
+
+  if 'userId' in request.args and 'feederId' in request.args:
+    userId = int(request.args['userId'])
+    feederId = int(request.args['feederId'])
+  else:
+    return "Error: No id field provided. Please specify an id."
+
+  if feederId == -1:
+    for user in users:
+      if (userId == user.getUserId()):
+        logs = user.getAllUserLogs()
+        logsToFile(logs)
+        return send_from_directory('', 'exportFile.txt', as_attachment=True)
+  else:
+    for user in users:
+      if (userId == user.getUserId()):
+        logs = user.getFeederById(feederId).getAllFeederLogs()
+        logsToFile(logs)
+        return send_from_directory('', 'exportFile.txt', as_attachment=True)
+  
+  return "User or feeder not found"
+
+@app.route('/exportTimeTables', methods=['GET'])
+def api_getLogs():
+  global users
+
+  if 'userId' in request.args and 'feederId' in request.args:
+    userId = int(request.args['userId'])
+    feederId = int(request.args['feederId'])
+  else:
+    return "Error: No id field provided. Please specify an id."
+
+  if feederId != -1:
+    for user in users:
+      if (userId == user.getUserId()):
+        timeTable = user.getFeederById(feederId).getTimeTable()
+        timeTableToFile(timeTable)
+        return send_from_directory('', 'exportFile.txt', as_attachment=True)
+  
+  return "User or feeder not found"

@@ -126,104 +126,10 @@ class _FeederListViewState extends State<FeederListView> {
                                 Feeder.removeLabel(feeders[index]), userId)
                             .then((value) => feeders = value)
                             .whenComplete(() => refresh());
-
-                        /*StringBuffer newLabels = new StringBuffer();
-                        //StringBuffer newLabelsState = new StringBuffer();
-                        if (feeders[index].labels.isEmpty != true) {
-                          for (int i = 0;  i < feeders[index].labels.length - 1; i++) {
-                            if (i == feeders[index].labels.length - 2) {
-                              newLabels.write(feeders[index].labels[i]);
-                              //newLabelsState
-                              //.write(feeders[index].stateLabels_[i]);
-                            } else {
-                              newLabels.write(feeders[index].labels[i] + "__");
-                              //newLabelsState
-                              // .write(feeders[index].stateLabels_[i] + "__");
-                            }
-                          }
-                        }
-                        if (newLabels.toString() == "__") {
-                          newLabels = new StringBuffer();
-                          //newLabelsState = new StringBuffer();
-                        }
-                        String post_data = "feederId=" +
-                            feeders[index].feederId.toString() +
-                            "&userId=" +
-                            userId.toString() +
-                            "&labels=" +
-                            newLabels.toString() +
-                            //"&labelsState=" +
-                            //newLabelsState.toString() +
-                            "&feederType=" +
-                            feeders[index].feederType +
-                            "&timeTable=" +
-                            "no" +
-                            "&capacity=100" +
-                            "&filledInternally=" +
-                            feeders[index].filledInernally.toString() +
-                            "&filledExternally=" +
-                            feeders[index].filledExternally.toString();*/
-                        /*http
-                            .post("http://localhost:5000/feeders/?$post_data")
-                            .then((response) {});
-
-                        http
-                            .get("http://localhost:5000/users/?userId=$userId")
-                            .then((response) {
-                          var data = json.decode(response.body);
-                          print(response.body);
-                          var rest = data["feeders"] as List;
-                          feeders = new List<Feeder>();
-                          feeders = rest
-                              .map<Feeder>((json) => Feeder.fromJson(json))
-                              .toList();
-                          print(feeders[0].stateLabels);
-                          for (int i = 0; i < feeders.length; i++) {
-                            feeders[i].userId = userId;
-                            print(feeders[i].labels);
-                            if (feeders[i].labels[0] != '') {
-                              feeders[i].stateLabels =
-                                  new List<bool>(feeders[i].labels.length);
-                              print(feeders[i].labels.length);
-                              for (int j = 0;
-                                  j < feeders[i].labels.length;
-                                  j++) {
-                                feeders[i].stateLabels[j] = false;
-                                /*if (feeders[i].stateLabels_[j] == "false") {
-                                  feeders[i].stateLabels.add(false);
-                                } else {
-                                  feeders[i].stateLabels.add(true);
-                                }*/
-
-                              }
-                              print(
-                                  "state" + feeders[i].stateLabels.toString());
-                            } else {
-                              feeders[i].stateLabels = new List<bool>();
-                              feeders[i].labels = new List<String>();
-                              //feeders[i].stateLabels_ = new List<String>();
-                            }
-                            
-                          }
-                          setState(() {});
-                        });*/
                       },
                       onPressed: () {
                         TextEditingController _c = new TextEditingController();
                         String label;
-                        StringBuffer newLabels = new StringBuffer();
-                        StringBuffer newLabelsState = new StringBuffer();
-                        if (feeders[index].labels.isEmpty != true) {
-                          for (int i = 0;
-                              i < feeders[index].labels.length;
-                              i++) {
-                            newLabels.write(feeders[index].labels[i] + "__");
-                            newLabelsState.write(
-                                feeders[index].labelsState[i].toString() +
-                                    "__");
-                          }
-                        }
-                        print(newLabels);
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -240,56 +146,14 @@ class _FeederListViewState extends State<FeederListView> {
                                     child: Text("Добавить"),
                                     onPressed: () {
                                       label = _c.text;
-                                      print(label);
-                                      print(index);
-                                      newLabels.write(label);
-                                      newLabelsState.write("false");
-                                      String post_data = "feederId=" +
-                                          feeders[index].feederId.toString() +
-                                          "&userId=" +
-                                          userId.toString() +
-                                          "&labels=" +
-                                          newLabels.toString() +
-                                          "&labelsState=" +
-                                          newLabelsState.toString() +
-                                          "&feederType=" +
-                                          feeders[index].feederType +
-                                          "&timeTable=" +
-                                          "no" +
-                                          "&capacity=100" +
-                                          "&filledInternally=" +
-                                          feeders[index]
-                                              .filledInernally
-                                              .toString() +
-                                          "&filledExternally=" +
-                                          feeders[index]
-                                              .filledExternally
-                                              .toString();
-                                      print(post_data);
-                                      http
-                                          .post(
-                                              "http://localhost:5000/feeders/?$post_data")
-                                          .then((response) {});
+
+                                      HttpClientFeed.changeFeeder(
+                                              Feeder.addLabel(
+                                                  feeders[index], label),
+                                              userId)
+                                          .then((value) => feeders = value)
+                                          .whenComplete(() => refresh());
                                       Navigator.of(context).pop();
-                                      http
-                                          .get(
-                                              "http://localhost:5000/users/?userId=$userId")
-                                          .then((response) {
-                                        var data = json.decode(response.body);
-                                        print(response.body);
-                                        var rest = data["feeders"] as List;
-                                        feeders = new List<Feeder>();
-                                        feeders = rest
-                                            .map<Feeder>(
-                                                (json) => Feeder.fromJson(json))
-                                            .toList();
-                                        for (int i = 0;
-                                            i < feeders.length;
-                                            i++) {
-                                          feeders[i].userId = userId;
-                                        }
-                                        setState(() {});
-                                      });
                                     },
                                   )
                                 ],

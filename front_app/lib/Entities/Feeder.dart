@@ -136,4 +136,35 @@ class Feeder {
         "&filledExternally=" +
         feeder.filledExternally.toString();
   }
+
+  static String addLabel(Feeder feeder, String label) {
+    StringBuffer newLabels = new StringBuffer();
+    StringBuffer newLabelsState = new StringBuffer();
+    if (feeder.labels.isEmpty != true) {
+      for (int i = 0; i < feeder.labels.length; i++) {
+        newLabels.write(feeder.labels[i] + "__");
+        newLabelsState.write(feeder.labelsState[i].toString() + "__");
+      }
+    }
+    newLabels.write(label);
+    newLabelsState.write("false");
+
+    return "feederId=" +
+        feeder.feederId.toString() +
+        "&userId=" +
+        feeder.userId.toString() +
+        "&labels=" +
+        newLabels.toString() +
+        "&labelsState=" +
+        newLabelsState.toString() +
+        "&feederType=" +
+        feeder.feederType +
+        "&timeTable=" +
+        "no" +
+        "&capacity=100" +
+        "&filledInternally=" +
+        feeder.filledInernally.toString() +
+        "&filledExternally=" +
+        feeder.filledExternally.toString();
+  }
 }
