@@ -87,6 +87,25 @@ def api_userId():
         return "User deleted"
     return "User not found"
 
+@app.route('/users/logs', methods = ['GET'])
+def api_userLogs():
+  global users
+
+  if 'userId' in request.args:
+    userId = int(request.args['userId'])
+  else:
+    return "Error: No id field provided. Please specify an id."
+
+  if request.method == 'GET':
+    """return the information for some user"""
+    """TODO: add time option"""
+    for user in users:
+      if (user.getUserId() == int(userId)):
+        result = user.getAllUserLogs()
+        return jsonify(result)
+
+    return "User not found"
+
 @app.route('/feeders/', methods=['GET', 'POST', 'DELETE'])
 def api_UserFeeders():
   global users
@@ -115,6 +134,7 @@ def api_UserFeeders():
     if (int(request.args['feederId']) == -1):
       feeder_fields = {
         'labels': str(request.args['labels']),
+        'labelsState': str(request.args['labelsState']),
         'userId': int(request.args['userId']),
         'feederType': str(request.args['feederType']),
         'timeTable': str(request.args['timeTable']),
@@ -133,6 +153,7 @@ def api_UserFeeders():
     else:
       feeder_fields = {
         'labels': str(request.args['labels']),
+        'labelsState': str(request.args['labelsState']),
         'userId': int(userId),
         'feederType': str(request.args['feederType']),
         'timeTable': str(request.args['timeTable']),

@@ -3,11 +3,43 @@ from psycopg2 import sql
 
 lastFeederId=0
 lastUserId=0
+lastLogId=0
 
 db_name = 'feeder_system'
 db_user = 'postgres'
 db_password = 'admin'
 db_host = 'localhost'
+
+def datetimeToStr(datetime):
+	result = ''
+	result += datetime[0][datetime[0].find('(')+1:]
+	
+	for value in datetime[1:3]:
+		if int(value)>=10:
+			result += '-' + value
+		else: 
+			result += '-0' + value
+
+	if int(value)>=10:
+		result += ' ' + datetime[3]
+	else: 
+		result += ' ' + datetime[3]
+
+	for value in datetime[4:-1]:
+		if int(value)>=10:
+			result += ':' + value
+		else: 
+			result += ':0' + value
+
+	result += '.' + datetime[-1][:-1]
+
+	return result
+
+def safeIntForDB(value):
+	if value == 'None':
+		return -1
+	else:
+		return int(value)
 
 def logIdWithAutoInc():
 	global lastLogId
@@ -34,6 +66,8 @@ def getLastLogId():
 	return lastLogId
 
 def log(logType, logMessage, userId=None, feederId=None):
+	global lastLogId
+	lastLogId=getLastLogId()
 	conn = psycopg2.connect(dbname=db_name, user=db_user, 
   password=db_password, host=db_host)
 	cursor = conn.cursor()
@@ -53,14 +87,14 @@ def log(logType, logMessage, userId=None, feederId=None):
 	cursor.close()
 	conn.close()
 
-lastLogId=getLastLogId()
+	
 
 
 
 class Feeder:
 	feederId = 0
 	labels = ''
-	#labelsState = ''
+	labelsState = ''
 	userId = 0
 	feederType = ''
 	timeTable = ''
@@ -78,7 +112,7 @@ class Feeder:
 		self.feederId = lastFeederId
 		lastFeederId +=1
 		self.labels = str(values["labels"])
-		#self.labelsState = str(values["labelsState"])
+		self.labelsState = str(values["labelsState"])
 		self.userId = int(values["userId"])
 		self.feederType = str(values["feederType"])
 		self.timeTable = str(values["timeTable"])
@@ -127,7 +161,7 @@ class Feeder:
 		feeder = {
 			'feederId': int(self.feederId),
 			'labels': str(self.labels),
-			#'labelsState':str(self.labelsState),
+			'labelsState':str(self.labelsState),
 			'userId': int(self.userId),
 			'feederType': str(self.feederType),
 			'timeTable': str(self.timeTable),
@@ -149,7 +183,7 @@ class Feeder:
 
 	def set(self, values): 
 		self.labels = str(values["labels"])
-		#self.labelsState = str(values["labelsState"])
+		self.labelsState = str(values["labelsState"])
 		self.userId = int(values["userId"])
 		self.feederType = str(values["feederType"])
 		self.timeTable = str(values["timeTable"])
@@ -162,8 +196,8 @@ class Feeder:
     password=db_password, host=db_host)
 		cursor = conn.cursor()
 		conn.autocommit = True
-		columns = "feederid, labels, userid, feedertype, timetable, capacity, filledinternally, filledexternally"#, labelsState"
-		values = str(self.feederId)+", '"+str(self.labels)+"', "+str(self.userId)+", '"+str(self.feederType)+"', '"+str(self.timeTable)+"', "+str(self.capacity)+', '+str(self.filledInternally)+', '+str(self.filledExternally)#+", '"+str(self.labelsState)
+		columns = "feederid, labels, labelsState, userid, feedertype, timetable, capacity, filledinternally, filledexternally"#, labelsState"
+		values = str(self.feederId)+", '"+str(self.labels)+"', '"+str(self.labelsState)+"', "+str(self.userId)+", '"+str(self.feederType)+"', '"+str(self.timeTable)+"', "+str(self.capacity)+', '+str(self.filledInternally)+', '+str(self.filledExternally)#+", '"+str(self.labelsState)
 		cursor.execute(sql.SQL(
 			'INSERT INTO feeders VALUES('+values+');')) 
 		cursor.close()
@@ -175,7 +209,7 @@ class Feeder:
     password=db_password, host=db_host)
 		cursor = conn.cursor()
 		conn.autocommit = True
-		values = "labels='"+str(self.labels)+"', userid="+str(self.userId)+", feedertype='"+str(self.feederType)+"', timetable='"+str(self.timeTable)+"', capacity="+str(self.capacity)+', filledInternally='+str(self.filledInternally)+', filledExternally='+str(self.filledExternally)#='+str(self.labelsState)
+		values = "labels='"+str(self.labels)+"', "+"labelsState='"+str(self.labelsState)+"', "+ "userid="+str(self.userId)+", feedertype='"+str(self.feederType)+"', timetable='"+str(self.timeTable)+"', capacity="+str(self.capacity)+', filledInternally='+str(self.filledInternally)+', filledExternally='+str(self.filledExternally)#='+str(self.labelsState)
 		cursor.execute(sql.SQL(
 			'UPDATE feeders SET '+values+'WHERE feeders.feederid='+str(self.feederId)+';')) 
 		cursor.close()
@@ -299,7 +333,7 @@ class User:
 			"UPDATE users SET username = '"+self.name+"' WHERE users.userid="+str(self.userId)+";")) 
 		cursor.close()
 		conn.close()
-		log("USER UPDATE", "USER "+self.name+"UPDATED IN DB", self.userId)
+		log("USER UPDATE", "USER "+self.name+" UPDATED IN DB", self.userId)
 
 	def deleteInDB(self):
 		conn = psycopg2.connect(dbname=db_name, user=db_user, 
@@ -311,7 +345,38 @@ class User:
 			"DELETE FROM users WHERE users.userid="+str(self.userId)+";")) 
 		cursor.close()
 		conn.close()
-		log("USER DELETE", "USER "+self.name+"DELETED IN DB", self.userId)
+		log("USER DELETE", "USER "+self.name+" DELETED IN DB", self.userId)
+
+	def getAllUserLogs(self):
+		conn = psycopg2.connect(dbname=db_name, user=db_user, 
+		password=db_password, host=db_host)
+
+		cursor = conn.cursor()
+		conn.autocommit = True
+		cursor.execute('SELECT * FROM logs WHERE logs.userid = '+str(self.userId)+';')
+		# cursor.execute('SELECT * FROM logs;')
+
+		logs = []
+
+		for row in cursor:
+			fields = str(row)[1:-1].split(', ')
+			log = {
+				'logId': int(fields[0]),
+				'logType': str(fields[1][1:-1]),
+				'logMessage': str(fields[2][1:-1]),
+				'userId': safeIntForDB(fields[3]),
+				'feederId': safeIntForDB(fields[4]),
+				'timeStamp': datetimeToStr(fields[-7:])
+			}
+			logs.append(log)
+
+		cursor.close()
+		conn.close()
+
+		return logs
+
+
+
 
 # class Admin:
 # 	users = []
@@ -376,12 +441,13 @@ def loadFeeders():
 	  values= {
 		  'feederId': int(fields[0]),
 		  'labels': str(fields[1])[1:-1],
-		  'userId': int(fields[2]),
-		  'feederType': str(fields[3])[1:-1],
-		  'timeTable': str(fields[4])[1:-1],
-		  'capacity': int(fields[5]),
-		  'filledInternally': int(fields[6]),
-		  'filledExternally': int(fields[7])
+		  'labelsState': str(fields[2])[1:-1],
+		  'userId': int(fields[3]),
+		  'feederType': str(fields[4])[1:-1],
+		  'timeTable': str(fields[5])[1:-1],
+		  'capacity': int(fields[6]),
+		  'filledInternally': int(fields[7]),
+		  'filledExternally': int(fields[8])
 	  }
 	  feeders.append(Feeder(values))
 

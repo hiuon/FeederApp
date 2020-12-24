@@ -1,7 +1,7 @@
 class Feeder {
   int feederId;
   int userId;
-  List<bool> stateLabels;
+  List<bool> labelsState;
   List<String> labels;
   String feederType;
   String timeTable;
@@ -14,7 +14,7 @@ class Feeder {
       {this.feederId,
       this.labels,
       this.feederType,
-      this.stateLabels,
+      this.labelsState,
       this.timeTable,
       this.capacity,
       this.filledExternally,
@@ -33,19 +33,19 @@ class Feeder {
         filledExternally: json["filledExternally"] as int,
         filledInernally: json["filledInternally"] as int,
         logs: log(),
-        //stateLabels:
-        //    fromStringToBool((json["labelState"] as String).split("__"))
+        labelsState:
+            fromStringToBool((json["labelsState"] as String).split("__")));
 
-        stateLabels: onlyFalse((json["labels"] as String).split("__").length));
+    //stateLabels: onlyFalse((json["labels"] as String).split("__").length));
   }
 
-  static List<bool> onlyFalse(int length) {
+  /*static List<bool> onlyFalse(int length) {
     List<bool> stateL = new List<bool>();
     for (int i = 0; i < length; i++) {
       stateL.add(false);
     }
     return stateL;
-  }
+  }*/
 
   static String log() {
     return "test information...........................................еуые";
@@ -54,12 +54,69 @@ class Feeder {
   static List<bool> fromStringToBool(List<String> state) {
     List<bool> stateL = new List<bool>();
     for (String i in state) {
-      if (i == "0") {
+      if (i == "false") {
         stateL.add(false);
       } else {
         stateL.add(true);
       }
     }
     return stateL;
+  }
+
+  static String removeLabel(Feeder feeder) {
+    StringBuffer newLabels = new StringBuffer();
+    StringBuffer newLabelsState = new StringBuffer();
+    if (feeder.labels.isEmpty != true) {
+      for (int i = 0; i < feeder.labels.length - 1; i++) {
+        if (i == feeder.labels.length - 2) {
+          newLabels.write(feeder.labels[i]);
+          newLabelsState.write(feeder.labelsState[i].toString());
+        } else {
+          newLabels.write(feeder.labels[i] + "__");
+          newLabelsState.write(feeder.labelsState[i].toString() + "__");
+        }
+      }
+    }
+    if (newLabels.toString() == "__") {
+      newLabels = new StringBuffer();
+      newLabelsState = new StringBuffer();
+    }
+    return "feederId=" +
+        feeder.feederId.toString() +
+        "&userId=" +
+        feeder.userId.toString() +
+        "&labels=" +
+        newLabels.toString() +
+        "&labelsState=" +
+        newLabelsState.toString() +
+        "&feederType=" +
+        feeder.feederType +
+        "&timeTable=" +
+        "no" +
+        "&capacity=100" +
+        "&filledInternally=" +
+        feeder.filledInernally.toString() +
+        "&filledExternally=" +
+        feeder.filledExternally.toString();
+  }
+
+  static String changeLabel(Feeder feeder) {
+    return "feederId=" +
+        feeder.feederId.toString() +
+        "&userId=" +
+        feeder.userId.toString() +
+        "&labels=" +
+        feeder.labels.toString() +
+        "&labelsState=" +
+        feeder.labelsState.toString() +
+        "&feederType=" +
+        feeder.feederType +
+        "&timeTable=" +
+        "no" +
+        "&capacity=100" +
+        "&filledInternally=" +
+        feeder.filledInernally.toString() +
+        "&filledExternally=" +
+        feeder.filledExternally.toString();
   }
 }

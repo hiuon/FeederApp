@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:front_app/Service/http_service.dart';
 import 'package:http/http.dart' as http;
 import '../Entities/Feeder.dart';
 
@@ -36,59 +38,29 @@ class FeederListView extends StatefulWidget {
 
 class _FeederListViewState extends State<FeederListView> {
   //default parametres
+  Timer timer;
   List<Feeder> feeders;
   int userId;
   String url = "localhost:5000";
 
   _FeederListViewState(int userId) {
-    //show feeders
-    http.get("http://localhost:5000/users/?userId=$userId").then((response) {
-      var data = json.decode(response.body);
-      print(response.body);
-      var rest = data["feeders"] as List;
-      feeders = new List<Feeder>();
-      feeders = rest.map<Feeder>((json) => Feeder.fromJson(json)).toList();
-      this.userId = userId;
-      print(feeders);
+    this.userId = userId;
+    HttpClientFeed.getFeeders(userId)
+        .then((value) => feeders = value)
+        .whenComplete(() => refresh());
+  }
 
-      for (int i = 0; i < feeders.length; i++) {
-        feeders[i].userId = userId;
-        print(feeders[i].labels);
-        if (feeders[i].labels[0] != '') {
-          feeders[i].stateLabels = new List<bool>(feeders[i].labels.length);
-          print(feeders[i].labels.length);
-          for (int j = 0; j < feeders[i].labels.length; j++) {
-            /*if (feeders[i].stateLabels_[j] == "false") {
-              feeders[i].stateLabels.add(false);
-            } else {
-              feeders[i].stateLabels.add(true);
-            }*/
-            feeders[i].stateLabels[j] = false;
-          }
-          print("state" + feeders[i].stateLabels.toString());
-        } else {
-          feeders[i].stateLabels = new List<bool>();
-          //feeders[i].stateLabels_ = new List<String>();
-          feeders[i].labels = new List<String>();
-        }
-        /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
-          if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].stateLabels.add(false);
-          } else {
-            feeders[i].stateLabels.add(true);
-          }
-        }
-        for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].stateLabels.add(false);
-        }
-        print(feeders[i].stateLabels);
-      }*/
-        print(feeders[i].stateLabels.length);
-        print(feeders[i].labels.length);
-      }
+  void refresh() {
+    setState(() {});
+  }
 
-      setState(() {});
-    });
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+        Duration(seconds: 5),
+        (Timer t) => HttpClientFeed.getFeeders(userId)
+            .then((value) => feeders = value)
+            .whenComplete(() => refresh()));
   }
 
   Widget build(BuildContext context) {
@@ -129,12 +101,14 @@ class _FeederListViewState extends State<FeederListView> {
                     child: Row(
                       children: [
                         ToggleButtons(
-                          isSelected: feeders[index].stateLabels,
+                          isSelected: feeders[index].labelsState,
                           onPressed: (int _index) {
                             setState(() {
-                              feeders[index].stateLabels[_index] =
-                                  !feeders[index].stateLabels[_index];
+                              feeders[index].labelsState[_index] =
+                                  !feeders[index].labelsState[_index];
                             });
+                            HttpClientFeed.changeFeeder(
+                                Feeder.changeLabel(feeders[index]), userId);
                           },
                           children: showToggle(feeders[index].labels),
                         )
@@ -147,13 +121,15 @@ class _FeederListViewState extends State<FeederListView> {
                       child: Text("+"),
                       color: Colors.blue,
                       onLongPress: () {
-                        StringBuffer newLabels = new StringBuffer();
+                        HttpClientFeed.changeFeeder(
+                                Feeder.removeLabel(feeders[index]), userId)
+                            .then((value) => feeders = value)
+                            .whenComplete(() => refresh());
+
+                        /*StringBuffer newLabels = new StringBuffer();
                         //StringBuffer newLabelsState = new StringBuffer();
-                        //newLabels.writeAll(feeders[index].labels, "; ");
                         if (feeders[index].labels.isEmpty != true) {
-                          for (int i = 0;
-                              i < feeders[index].labels.length - 1;
-                              i++) {
+                          for (int i = 0;  i < feeders[index].labels.length - 1; i++) {
                             if (i == feeders[index].labels.length - 2) {
                               newLabels.write(feeders[index].labels[i]);
                               //newLabelsState
@@ -185,8 +161,8 @@ class _FeederListViewState extends State<FeederListView> {
                             "&filledInternally=" +
                             feeders[index].filledInernally.toString() +
                             "&filledExternally=" +
-                            feeders[index].filledExternally.toString();
-                        http
+                            feeders[index].filledExternally.toString();*/
+                        /*http
                             .post("http://localhost:5000/feeders/?$post_data")
                             .then((response) {});
 
@@ -226,35 +202,24 @@ class _FeederListViewState extends State<FeederListView> {
                               feeders[i].labels = new List<String>();
                               //feeders[i].stateLabels_ = new List<String>();
                             }
-                            /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
-          if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].stateLabels.add(false);
-          } else {
-            feeders[i].stateLabels.add(true);
-          }
-        }
-        for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].stateLabels.add(false);
-        }
-        print(feeders[i].stateLabels);
-      }*/
+                            
                           }
                           setState(() {});
-                        });
+                        });*/
                       },
                       onPressed: () {
                         TextEditingController _c = new TextEditingController();
                         String label;
-                        //if (feeders[index].labels[0] == '') {
-                        //  feeders[index].labels = new List<String>();
-                        //}
                         StringBuffer newLabels = new StringBuffer();
-                        //newLabels.writeAll(feeders[index].labels, "; ");
+                        StringBuffer newLabelsState = new StringBuffer();
                         if (feeders[index].labels.isEmpty != true) {
                           for (int i = 0;
                               i < feeders[index].labels.length;
                               i++) {
                             newLabels.write(feeders[index].labels[i] + "__");
+                            newLabelsState.write(
+                                feeders[index].labelsState[i].toString() +
+                                    "__");
                           }
                         }
                         print(newLabels);
@@ -276,18 +241,16 @@ class _FeederListViewState extends State<FeederListView> {
                                       label = _c.text;
                                       print(label);
                                       print(index);
-                                      print("/" +
-                                          feeders[index].feederType +
-                                          "/");
-                                      //add label
-
                                       newLabels.write(label);
+                                      newLabelsState.write("false");
                                       String post_data = "feederId=" +
                                           feeders[index].feederId.toString() +
                                           "&userId=" +
                                           userId.toString() +
                                           "&labels=" +
                                           newLabels.toString() +
+                                          "&labelsState=" +
+                                          newLabelsState.toString() +
                                           "&feederType=" +
                                           feeders[index].feederType +
                                           "&timeTable=" +
@@ -319,45 +282,10 @@ class _FeederListViewState extends State<FeederListView> {
                                             .map<Feeder>(
                                                 (json) => Feeder.fromJson(json))
                                             .toList();
-                                        print(feeders[0].stateLabels);
                                         for (int i = 0;
                                             i < feeders.length;
                                             i++) {
                                           feeders[i].userId = userId;
-                                          print(feeders[i].labels);
-                                          if (feeders[i].labels[0] != '') {
-                                            feeders[i].stateLabels =
-                                                new List<bool>(
-                                                    feeders[i].labels.length);
-                                            print(feeders[i].labels.length);
-                                            for (int j = 0;
-                                                j < feeders[i].labels.length;
-                                                j++) {
-                                              feeders[i].stateLabels[j] = false;
-                                            }
-                                            print("state" +
-                                                feeders[i]
-                                                    .stateLabels
-                                                    .toString());
-                                          } else {
-                                            feeders[i].stateLabels =
-                                                new List<bool>();
-                                            //feeders[i].stateLabels_ = new List<String>();
-                                            feeders[i].labels =
-                                                new List<String>();
-                                          }
-                                          /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
-          if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].stateLabels.add(false);
-          } else {
-            feeders[i].stateLabels.add(true);
-          }
-        }
-        for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].stateLabels.add(false);
-        }
-        print(feeders[i].stateLabels);
-      }*/
                                         }
                                         setState(() {});
                                       });
@@ -546,7 +474,7 @@ class _FeederListViewState extends State<FeederListView> {
                                               print(feeders);
                                               print("labels :");
                                               print(feeders[0].labels);
-                                              print(feeders[0].stateLabels);
+                                              print(feeders[0].labelsState);
                                               for (int i = 0;
                                                   i < feeders.length;
                                                   i++) {
@@ -554,7 +482,7 @@ class _FeederListViewState extends State<FeederListView> {
                                                 print(feeders[i].labels);
                                                 if (feeders[i].labels[0] !=
                                                     '') {
-                                                  feeders[i].stateLabels =
+                                                  feeders[i].labelsState =
                                                       new List<bool>(feeders[i]
                                                           .labels
                                                           .length);
@@ -566,15 +494,15 @@ class _FeederListViewState extends State<FeederListView> {
                                                               .labels
                                                               .length;
                                                       j++) {
-                                                    feeders[i].stateLabels[j] =
+                                                    feeders[i].labelsState[j] =
                                                         false;
                                                   }
                                                   print("state" +
                                                       feeders[i]
-                                                          .stateLabels
+                                                          .labelsState
                                                           .toString());
                                                 } else {
-                                                  feeders[i].stateLabels =
+                                                  feeders[i].labelsState =
                                                       new List<bool>();
                                                   //feeders[i].stateLabels_ = new List<String>();
                                                   feeders[i].labels =
@@ -582,15 +510,15 @@ class _FeederListViewState extends State<FeederListView> {
                                                 }
                                                 /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
           if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].stateLabels.add(false);
+            feeders[i].labelsState.add(false);
           } else {
-            feeders[i].stateLabels.add(true);
+            feeders[i].labelsState.add(true);
           }
         }
         for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].stateLabels.add(false);
+          feeders[i].labelsState.add(false);
         }
-        print(feeders[i].stateLabels);
+        print(feeders[i].labelsState);
       }*/
                                               }
                                               setState(() {});
@@ -647,7 +575,7 @@ class _FeederListViewState extends State<FeederListView> {
                                                 print(feeders);
                                                 print("labels :");
                                                 print(feeders[0].labels);
-                                                print(feeders[0].stateLabels);
+                                                print(feeders[0].labelsState);
                                                 for (int i = 0;
                                                     i < feeders.length;
                                                     i++) {
@@ -655,7 +583,7 @@ class _FeederListViewState extends State<FeederListView> {
                                                   print(feeders[i].labels);
                                                   if (feeders[i].labels[0] !=
                                                       '') {
-                                                    feeders[i].stateLabels =
+                                                    feeders[i].labelsState =
                                                         new List<bool>(
                                                             feeders[i]
                                                                 .labels
@@ -670,15 +598,15 @@ class _FeederListViewState extends State<FeederListView> {
                                                                 .length;
                                                         j++) {
                                                       feeders[i]
-                                                              .stateLabels[j] =
+                                                              .labelsState[j] =
                                                           false;
                                                     }
                                                     print("state" +
                                                         feeders[i]
-                                                            .stateLabels
+                                                            .labelsState
                                                             .toString());
                                                   } else {
-                                                    feeders[i].stateLabels =
+                                                    feeders[i].labelsState =
                                                         new List<bool>();
                                                     //feeders[i].stateLabels_ = new List<String>();
                                                     feeders[i].labels =
@@ -686,15 +614,15 @@ class _FeederListViewState extends State<FeederListView> {
                                                   }
                                                   /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
           if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].stateLabels.add(false);
+            feeders[i].labelsState.add(false);
           } else {
-            feeders[i].stateLabels.add(true);
+            feeders[i].labelsState.add(true);
           }
         }
         for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].stateLabels.add(false);
+          feeders[i].labelsState.add(false);
         }
-        print(feeders[i].stateLabels);
+        print(feeders[i].labelsState);
       }*/
                                                 }
                                                 setState(() {});

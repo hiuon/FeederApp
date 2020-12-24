@@ -89,7 +89,7 @@ class _UserListViewState extends State<UserListView> {
     return FutureBuilder(
         future: _body,
         builder: (context, snapshot) {
-          if (snapshot.hasData == null) {
+          if (snapshot.hasData == false) {
             return Container();
           }
           return ListView.builder(

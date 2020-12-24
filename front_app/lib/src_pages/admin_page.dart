@@ -85,7 +85,10 @@ class _AdminListViewState extends State<AdminListView> {
             Icons.add_box_outlined,
             color: Colors.white,
           ),
+          textColor: Colors.white,
           color: Colors.blue,
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0)),
           onPressed: () {
             String name;
             TextEditingController _c = new TextEditingController();
@@ -133,7 +136,10 @@ class _AdminListViewState extends State<AdminListView> {
                   Icons.add_box_outlined,
                   color: Colors.white,
                 ),
+                textColor: Colors.white,
                 color: Colors.blue,
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0)),
                 onPressed: () {
                   String name;
                   TextEditingController _c = new TextEditingController();
@@ -194,7 +200,10 @@ class _AdminListViewState extends State<AdminListView> {
                 alignment: Alignment.center,
                 child: FlatButton(
                   child: Text("     Удалить\nПользователя"),
+                  textColor: Colors.white,
                   color: Colors.blue,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0)),
                   onPressed: () {
                     HttpClientFeed.deleteUser(users[index].userId)
                         .whenComplete(() {
@@ -205,11 +214,28 @@ class _AdminListViewState extends State<AdminListView> {
                 ),
               ),
               Container(
+                margin: EdgeInsets.only(left: 20),
+                alignment: Alignment.center,
+                child: FlatButton(
+                  child: Text("Просмотреть лог\n   Пользователя"),
+                  textColor: Colors.white,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0)),
+                  color: Colors.blue,
+                  onPressed: () {
+                    //HttpClientFeed.getUsers().then((value) => users = value);
+                  },
+                ),
+              ),
+              Container(
                 margin: EdgeInsets.only(left: 40),
                 alignment: Alignment.center,
                 child: FlatButton(
                   child: Text("+"),
+                  textColor: Colors.white,
                   color: Colors.blue,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0)),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -304,7 +330,10 @@ class _AdminListViewState extends State<AdminListView> {
           Container(
             child: FlatButton(
               child: Text("Просмотреть лог"),
+              textColor: Colors.white,
               color: Colors.blue,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0)),
               onPressed: () {
                 showDialog(
                     context: context,
@@ -320,7 +349,10 @@ class _AdminListViewState extends State<AdminListView> {
           Container(
             child: FlatButton(
               child: Text("Удалить кормушку"),
+              textColor: Colors.white,
               color: Colors.blue,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0)),
               onPressed: () {
                 HttpClientFeed.deleteFeeder(userId, feeders[i].feederId)
                     .then((value) => users = value)
