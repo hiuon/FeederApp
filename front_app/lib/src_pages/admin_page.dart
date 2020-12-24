@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -42,6 +43,20 @@ class AdminListView extends StatefulWidget {
 class _AdminListViewState extends State<AdminListView> {
   //default parametres
   List<User> users;
+  Timer timer;
+
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+        Duration(seconds: 5),
+        (Timer t) => HttpClientFeed.getUsers()
+            .then((value) => users = value)
+            .whenComplete(() => refresh()));
+  }
+
+  void refresh() {
+    setState(() {});
+  }
 
   _AdminListViewState() {
     http.get("http://localhost:5000/users").then((response) {
@@ -52,7 +67,9 @@ class _AdminListViewState extends State<AdminListView> {
       users = rest.map<User>((json) => User.fromJson(json)).toList();
       //проверка что просто все будет работать
       for (User i in users) {
-        i.userLogs = "test information";
+        for (Feeder j in i.feeders) {
+          j.logs = "test information";
+        }
       }
       setState(() {});
     });
@@ -89,22 +106,10 @@ class _AdminListViewState extends State<AdminListView> {
                         child: Text("Добавить"),
                         onPressed: () {
                           name = _c.text;
-                          print(name);
-                          http
-                              .get("http://localhost:5000/users/new?name=$name")
-                              .then((response) {});
-                          http
-                              .get("http://localhost:5000/users")
-                              .then((response) {
-                            var data = json.decode(response.body);
-                            var rest = data["users"] as List;
-                            users = new List<User>();
-                            users = rest
-                                .map<User>((json) => User.fromJson(json))
-                                .toList();
-                            print(users[0].feeders);
-                            setState(() {});
-                          });
+                          HttpClientFeed.addUser(name)
+                              .then((value) => users = value)
+                              .whenComplete(() => refresh());
+                          Navigator.of(context).pop();
                           Navigator.of(context).pop();
                         },
                       )
@@ -149,23 +154,9 @@ class _AdminListViewState extends State<AdminListView> {
                               child: Text("Добавить"),
                               onPressed: () {
                                 name = _c.text;
-                                print(name);
-                                http
-                                    .get(
-                                        "http://localhost:5000/users/new?name=$name")
-                                    .then((response) {});
-                                http
-                                    .get("http://localhost:5000/users")
-                                    .then((response) {
-                                  var data = json.decode(response.body);
-                                  var rest = data["users"] as List;
-                                  users = new List<User>();
-                                  users = rest
-                                      .map<User>((json) => User.fromJson(json))
-                                      .toList();
-                                  print(users[0].feeders);
-                                  setState(() {});
-                                });
+                                HttpClientFeed.addUser(name)
+                                    .then((value) => users = value)
+                                    .whenComplete(() => refresh());
                                 Navigator.of(context).pop();
                               },
                             )
@@ -261,43 +252,11 @@ class _AdminListViewState extends State<AdminListView> {
                                   } else {
                                     name = "spiral";
                                   }
-                                  String post_data =
-                                      "feederId=-1&userId=${users[index].userId}&labels=&feederType=$name&timeTable=no&capacity=100&filledInternally=100&filledExternally=0";
-                                  print(feed);
-                                  http
-                                      .post(
-                                        "http://localhost:5000/feeders/?$post_data",
-                                      )
-                                      .then((response) {});
-                                  http
-                                      .get("http://localhost:5000/users")
-                                      .then((response) {
-                                    var data = json.decode(response.body);
-                                    var rest = data["users"] as List;
-                                    print(response.body);
-                                    users = new List<User>();
-                                    users = rest
-                                        .map<User>(
-                                            (json) => User.fromJson(json))
-                                        .toList();
-                                    setState(() {});
-                                  });
-
-                                  http
-                                      .get("http://localhost:5000/users")
-                                      .then((response) {
-                                    var data = json.decode(response.body);
-                                    var rest = data["users"] as List;
-                                    print(response.body);
-                                    users = new List<User>();
-                                    users = rest
-                                        .map<User>(
-                                            (json) => User.fromJson(json))
-                                        .toList();
-                                    setState(() {});
-                                  });
+                                  HttpClientFeed.addFeeder(
+                                          users[index].userId, name)
+                                      .then((value) => users = value)
+                                      .whenComplete(() => refresh());
                                   Navigator.of(context).pop();
-                                  setState(() {});
                                 },
                               )
                             ],
@@ -352,7 +311,7 @@ class _AdminListViewState extends State<AdminListView> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text("ЛОГ"),
-                        content: Text(users[i].userLogs),
+                        content: Text(feeders[i].logs),
                       );
                     });
               },
@@ -363,27 +322,9 @@ class _AdminListViewState extends State<AdminListView> {
               child: Text("Удалить кормушку"),
               color: Colors.blue,
               onPressed: () {
-                http
-                    .delete(
-                      "http://localhost:5000/feeders/?userId=$userId&feederId=${feeders[i].feederId}",
-                    )
-                    .then((response) {});
-                http.get("http://localhost:5000/users").then((response) {
-                  var data = json.decode(response.body);
-                  var rest = data["users"] as List;
-                  users = new List<User>();
-                  users =
-                      rest.map<User>((json) => User.fromJson(json)).toList();
-                });
-                http.get("http://localhost:5000/users").then((response) {
-                  var data = json.decode(response.body);
-                  var rest = data["users"] as List;
-                  users = new List<User>();
-                  users =
-                      rest.map<User>((json) => User.fromJson(json)).toList();
-                  setState(() {});
-                });
-                setState(() {});
+                HttpClientFeed.deleteFeeder(userId, feeders[i].feederId)
+                    .then((value) => users = value)
+                    .whenComplete(() => refresh());
               },
             ),
           ),

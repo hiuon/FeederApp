@@ -4,7 +4,6 @@ class User {
   List<Feeder> feeders;
   int userId;
   String name;
-  String userLogs;
   //List<String> timeTables;
 
   User({this.feeders, this.userId, this.name});

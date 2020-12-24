@@ -5,6 +5,7 @@ class Feeder {
   List<String> labels;
   String feederType;
   String timeTable;
+  String logs;
   int capacity;
   int filledInernally;
   int filledExternally;
@@ -17,7 +18,8 @@ class Feeder {
       this.timeTable,
       this.capacity,
       this.filledExternally,
-      this.filledInernally});
+      this.filledInernally,
+      this.logs});
 
   factory Feeder.fromJson(Map<String, dynamic> json) {
     print("////////");
@@ -30,7 +32,7 @@ class Feeder {
         capacity: json["capacity"] as int,
         filledExternally: json["filledExternally"] as int,
         filledInernally: json["filledInternally"] as int,
-
+        logs: log(),
         //stateLabels:
         //    fromStringToBool((json["labelState"] as String).split("__"))
 
@@ -43,6 +45,10 @@ class Feeder {
       stateL.add(false);
     }
     return stateL;
+  }
+
+  static String log() {
+    return "test information...........................................еуые";
   }
 
   static List<bool> fromStringToBool(List<String> state) {

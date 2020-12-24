@@ -485,7 +485,16 @@ class _FeederListViewState extends State<FeederListView> {
                   child: FlatButton(
                     child: Text("Просмотреть лог"),
                     color: Colors.blue,
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("ЛОГ"),
+                              content: Text(feeders[index].logs),
+                            );
+                          });
+                    },
                   ),
                 ),
                 Container(
