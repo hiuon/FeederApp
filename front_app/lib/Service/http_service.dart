@@ -1,4 +1,9 @@
+import 'dart:html';
 import 'dart:js' as js;
+import 'dart:html' as html;
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 
 import '../Entities/Feeder.dart';
 import '../Entities/Logs.dart';
@@ -120,5 +125,64 @@ class HttpClientFeed {
     anchorElement.click();*/
     js.context.callMethod(
         'open', [url + "/exportLogs?userId=$userId&feederId=$feederId"]);
+  }
+
+  static void exportTimeTable(int userId, int feederId) {
+    js.context.callMethod(
+        'open', [url + "/exportTimeTables?userId=$userId&feederId=$feederId"]);
+  }
+
+  static void importTimeTable(Feeder feeder) {
+    InputElement uploadInput = FileUploadInputElement();
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      // read file content as dataURL
+      String time;
+      final files = uploadInput.files;
+      if (files.length == 1) {
+        final file = files[0];
+        FileReader reader = FileReader();
+
+        reader.onLoadEnd.listen((e) {
+          time = reader.result;
+          print(time);
+          List<String> tables = time.split(" ");
+          List<bool> state = List<bool>(8);
+          for (int i = 0; i < 8; i++) {
+            state[i] = false;
+          }
+          if (tables.contains("00:00")) {
+            state[0] = true;
+          }
+          if (tables.contains("03:00")) {
+            state[1] = true;
+          }
+          if (tables.contains("06:00")) {
+            state[2] = true;
+          }
+          if (tables.contains("09:00")) {
+            state[3] = true;
+          }
+          if (tables.contains("12:00")) {
+            state[4] = true;
+          }
+          if (tables.contains("15:00")) {
+            state[5] = true;
+          }
+          if (tables.contains("18:00")) {
+            state[6] = true;
+          }
+          if (tables.contains("21:00")) {
+            state[7] = true;
+          }
+          changeFeeder(Feeder.timeTableChange(feeder, state), feeder.userId);
+        });
+
+        reader.onError.listen((fileEvent) {});
+
+        reader.readAsText(file);
+      }
+    });
   }
 }

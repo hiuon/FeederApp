@@ -43,17 +43,17 @@ def log(logType, logMessage, userId=None, feederId=None):
   password=db_password, host=db_host)
 	cursor = conn.cursor()
 	conn.autocommit = True
-	logId = logIdWithAutoInc()
+	# logId = logIdWithAutoInc()
 
 	if userId is None:
 		querry = sql.SQL(
-			'INSERT INTO logs VALUES('+str(logId)+", '"+str(logType)+"', '"+str(logMessage)+"');")
+			"INSERT INTO logs VALUES(DEFAULT, '"+str(logType)+"', '"+str(logMessage)+"');")
 	elif feederId is None:
 		querry = sql.SQL(
-			'INSERT INTO logs VALUES('+str(logId)+", '"+str(logType)+"', '"+str(logMessage)+"', "+str(userId)+");")
+			"INSERT INTO logs VALUES(DEFAULT, '"+str(logType)+"', '"+str(logMessage)+"', "+str(userId)+");")
 	else:
 		querry = sql.SQL(
-			'INSERT INTO logs VALUES('+str(logId)+", '"+str(logType)+"', '"+str(logMessage)+"', "+str(userId)+", "+str(feederId)+");")
+			"INSERT INTO logs VALUES(DEFAULT, '"+str(logType)+"', '"+str(logMessage)+"', "+str(userId)+", "+str(feederId)+");")
 	cursor.execute(querry) 
 	cursor.close()
 	conn.close()

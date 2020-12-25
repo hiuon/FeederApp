@@ -11,6 +11,12 @@ feedValue = 5
 k = 0
 
 while True:
+	for i in range(3):
+		for user in users:
+			for feeder in user.getAllUserFeeders():
+				feeder.eat(2)
+		sleep(1)
+		
 	for user in users:
 		for feeder in user.getAllUserFeeders():
 			if needToFeed(feeder.getTimeTable(), k):
@@ -19,4 +25,4 @@ while True:
 		k+=1
 	else:
 		k=0
-	sleep(7.5)
+	sleep(1)

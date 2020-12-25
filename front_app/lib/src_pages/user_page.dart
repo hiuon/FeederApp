@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -237,7 +238,7 @@ class _FeederListViewState extends State<FeederListView> {
                                     },
                                   ),
                                   actions: [
-                                    new FlatButton(
+                                    FlatButton(
                                       child: Text("Изменить"),
                                       onPressed: () {
                                         print(timeTableBool);
@@ -245,8 +246,25 @@ class _FeederListViewState extends State<FeederListView> {
                                             Feeder.timeTableChange(
                                                 feeders[index], timeTableBool),
                                             userId);
+                                        Navigator.of(context).pop();
                                       },
-                                    )
+                                    ),
+                                    FlatButton(
+                                      child: Text("Экспорт"),
+                                      onPressed: () {
+                                        HttpClientFeed.exportTimeTable(
+                                            userId, feeders[index].feederId);
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Импорт"),
+                                      onPressed: () {
+                                        HttpClientFeed.importTimeTable(
+                                            feeders[index]);
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
                                   ],
                                 );
                               });

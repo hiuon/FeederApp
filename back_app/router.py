@@ -261,6 +261,7 @@ def exportLogs(request):
 def getTimeTable(request):
 	syncWithDB()
 	global users
+	global utilities
 	if 'userId' in request.args and 'feederId' in request.args:
 		userId = int(request.args['userId'])
 		feederId = int(request.args['feederId'])
@@ -271,5 +272,5 @@ def getTimeTable(request):
 		if (userId == user.getUserId()):
 			timeTable = user.getFeederById(feederId).getTimeTable()
 			timeTableToFile(timeTable)
-			return send_from_directory('', 'exportFile.txt', as_attachment=True)
+			return send_from_directory('', utilities.exportFilename, as_attachment=True)
 	return 'User or feeder not found'
