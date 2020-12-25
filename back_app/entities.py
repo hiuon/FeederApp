@@ -1,108 +1,21 @@
+# from dbHelper import
+from utilities import datetimeToStr, safeIntForDB
 import psycopg2
 from psycopg2 import sql
-
-lastFeederId=0
-lastUserId=0
-lastLogId=0
+#from utilities import 
 
 db_name = 'feeder_system'
 db_user = 'postgres'
 db_password = 'admin'
 db_host = 'localhost'
 
-#тут время нужно пофиксить
-timings = ['8:00', '11:00', '13:00', '16:00', '19:00', '22:00']
-
-def shiftedToTheLeft(text, size):
-	if len(text)!=size:
-		text += " "*(size-len(text))
-	return text
-
-def logToRow(log):
-	columnLength = 15
-	row = shiftedToTheLeft(str(log['logId']),columnLength)
-	row += shiftedToTheLeft(log['logType'], columnLength)
-	row += shiftedToTheLeft(log['logMessage'],columnLength)
-	row += shiftedToTheLeft(str(log['userId']),columnLength)
-	row += shiftedToTheLeft(str(log['feederId']),columnLength)
-	row += shiftedToTheLeft(log['timeStamp'],columnLength)
-	return row
-
-def decodeTimeTable(value):
-	values = value.split('__')
-	value = ''
-	result = ''
-	for value, index in zip(values, range(len(values))):
-		print(value, index)
-		if value=='true':
-			result += timings[index] + ' '
-
-	return result
-
-def timeTableToFile(value):
-	with open('exportFile.txt','w+') as f:
-		f.write(decodeTimeTable(value))
-		f.close()
-
-def fileToTimetable(filepath):
-	with open(filepath, 'r') as f:
-		values = f.read().split(" ")
-		timeTable = ''
-		
-		for timing in timings:
-			if timing in values:
-				timeTable += 'true__'
-			else:
-				timeTable += 'false__'
-		timeTable = timeTable[:-2]
-	return timeTable
-
-def logsToFile(logs):
-	head = ['logId', 'logType', 'logMessage', 'userId', 'feederId', 'timeStamp']
-	row = ''
-	for item in head:
-		row += shiftedToTheLeft(item, 15)
-	with open('exportFile.txt','w+') as f:
-		f.write(row)
-		for log in logs:
-			f.write(logToRow(log)+'\n')
-		f.close()
-
-def datetimeToStr(datetime):
-	result = ''
-	result += datetime[0][datetime[0].find('(')+1:]
-	
-	for value in datetime[1:3]:
-		if int(value)>=10:
-			result += '-' + value
-		else: 
-			result += '-0' + value
-
-	if int(datetime[3])>=10:
-		result += ' ' + datetime[3]
-	else: 
-		result += ' ' + datetime[3]
-
-	for value in datetime[4:-1]:
-		if int(value)>=10:
-			result += ':' + value
-		else: 
-			result += ':0' + value
-
-	result += '.' + datetime[-1][:-1]
-
-	return result
-
-def safeIntForDB(value):
-	if value == 'None':
-		return -1
-	else:
-		return int(value)
+lastFeederId=0
+lastUserId=0
+lastLogId=0
 
 def logIdWithAutoInc():
 	global lastLogId
 	lastLogId +=1
-	#print(lastLogId)
 	return lastLogId-1
 
 def getLastLogId():
@@ -174,19 +87,10 @@ class Feeder:
 		self.filledInternally = int(values["filledInternally"])
 		self.filledExternally = int(values["filledExternally"])
 
-
-	FEEDER_FEEDING_OK = 'FEEDER_FEEDING_OK'
-	FEEDER_FEEDING_FAIL = 'FEEDER_FEEDING_FAIL'
-	FEEDER_PING_OK = 'FEEDER_PING_OK'
-	FEEDER_PING_FAIL = 'FEEDER_PING_FAIL'
-	FEEDER_EATING_OK = 'FEEDER_EATING_OK'
-	FEEDER_EATING_FAIL = 'FEEDER_EATING_FAIL'
-
 	def setUserId(self, userId):
 		self.userId = int(userId)
 		self.updateInDB()
 		log("FEEDER STATE", "FEEDER OWNER CHANGE", self.userId, self.feederId)
-
 
 	def getUserId(self):
 		return int(self.userId)
@@ -200,7 +104,6 @@ class Feeder:
 			log("FEEDER STATE", "FEEDING OK", self.userId, self.feederId)
 		else:
 			log("FEEDER ERROR", "FEEDING FAILED. WRONG FEED VALUE (TOO BIG)", self.userId, self.feederId)
-
 
 	def eat(self, amount):
 		amount = int(amount)
@@ -312,7 +215,6 @@ class Feeder:
 
 	def getTimeTable(self):
 		return self.timeTable
-
 
 class User:
 	userId = 0
@@ -460,31 +362,6 @@ class User:
 		conn.close()
 
 		return logs
-
-
-
-
-# class Admin:
-# 	users = []
-
-# 	def addFeederToUser(self, feeder, user):
-# 		user.addFeeder(feeder)
-
-# 	def addUser(self, user):
-# 		users.append(user)
-
-# 	def monitorFeeder(self, feeder):
-# 		feeder.getCurrentState()
-
-# 	def monitorUser(self, user):
-# 		for feeder in user.feeders:
-# 			feeder.getCurrentState()
-
-# 	def exportUserLog():
-# 		print('export user log')
-
-# 	def exportUserLog():
-# 		print('export user log')
 
 def loadUsers():
 	conn = psycopg2.connect(dbname=db_name, user=db_user, 

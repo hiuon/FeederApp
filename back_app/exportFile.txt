@@ -1,12 +1,36 @@
-logId          logType        logMessage     userId         feederId       timeStamp      334            USER SAVE      USER user5SAVED IN DB44             -1             2020-12-25 11:51:14.179644
-335            FEEDER UPDATE  FEEDER UPDATED 44             5              2020-12-25 11:51:18.764086
-336            FEEDER STATE   FEEDER OWNER CHANGE44             5              2020-12-25 11:51:18.866616
-337            FEEDER SAVE    FEEDER SAVED   44             5              2020-12-25 11:51:19.123901
-342            FEEDER UPDATE  FEEDER UPDATED 44             5              2020-12-25 12:11:04.484195
-343            FEEDER STATE   FEEDER OWNER CHANGE44             5              2020-12-25 12:11:04.585729
-348            FEEDER UPDATE  FEEDER UPDATED 44             5              2020-12-25 12:15:58.127064
-349            FEEDER STATE   FEEDER OWNER CHANGE44             5              2020-12-25 12:15:58.226235
-354            FEEDER UPDATE  FEEDER UPDATED 44             5              2020-12-25 12:18:32.423352
-355            FEEDER STATE   FEEDER OWNER CHANGE44             5              2020-12-25 12:18:32.523612
-360            FEEDER UPDATE  FEEDER UPDATED 44             5              2020-12-25 12:19:43.689383
-361            FEEDER STATE   FEEDER OWNER CHANGE44             5              2020-12-25 12:19:43.789812
+logId          logType        logMessage     userId         feederId       timeStamp      4              FEEDER UPDATE  FEEDER UPDATED 1              3              2020-12-05 15:02:34.986506
+5              FEEDER STATE   FEEDER OWNER CHANGE1              3              2020-12-05 15:02:35.31290
+8              FEEDER UPDATE  FEEDER UPDATED 1              3              2020-12-05 15:07:37.788065
+9              FEEDER STATE   FEEDING OK     1              3              2020-12-05 15:07:37.834955
+10             FEEDER UPDATE  FEEDER UPDATED 1              3              2020-12-05 15:11:23.744650
+11             FEEDER STATE   FEEDING OK     1              3              2020-12-05 15:11:23.791119
+14             FEEDER UPDATE  FEEDER UPDATED 1              3              2020-12-05 15:11:55.655987
+15             FEEDER STATE   FEEDING OK     1              3              2020-12-05 15:11:55.718819
+20             FEEDER UPDATE  FEEDER UPDATED 1              3              2020-12-05 15:14:41.338232
+21             FEEDER STATE   FEEDER OWNER CHANGE1              3              2020-12-05 15:14:41.382384
+23             FEEDER DELETE  FEEDER DELETED 1              3              2020-12-05 15:15:31.258275
+24             FEEDER UPDATE  FEEDER UPDATED 1              4              2020-12-05 15:15:46.526373
+25             FEEDER STATE   FEEDER OWNER CHANGE1              4              2020-12-05 15:15:46.577372
+26             FEEDER SAVE    FEEDER SAVED   1              4              2020-12-05 15:15:46.704196
+37             FEEDER UPDATE  FEEDER UPDATED 1              5              2020-12-05 15:54:37.671820
+38             FEEDER STATE   FEEDER OWNER CHANGE1              5              2020-12-05 15:54:37.731393
+39             FEEDER SAVE    FEEDER SAVED   1              5              2020-12-05 15:54:37.855523
+43             FEEDER DELETE  FEEDER DELETED 1              4              2020-12-05 15:54:45.113673
+50             FEEDER DELETE  FEEDER DELETED 1              5              2020-12-05 16:18:37.83175
+51             USER DELETE    USER userDELETED IN DB1              -1             2020-12-05 16:18:37.182569
+386            USER SAVE      USER user4SAVED IN DB1              -1             2020-12-25 13:49:53.611053
+391            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 13:50:23.30690
+392            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 13:50:23.132874
+393            FEEDER SAVE    FEEDER SAVED   1              2              2020-12-25 13:50:23.404737
+398            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 13:51:11.795271
+399            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 13:51:11.904307
+404            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 13:52:46.431785
+405            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 13:52:46.635804
+410            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 13:55:40.976048
+411            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 13:55:41.78951
+416            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 13:57:44.824788
+417            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 13:57:44.925481
+425            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 14:00:51.726480
+426            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 14:00:51.825634
+431            FEEDER UPDATE  FEEDER UPDATED 1              2              2020-12-25 14:01:27.904609
+432            FEEDER STATE   FEEDER OWNER CHANGE1              2              2020-12-25 14:01:28.5527
