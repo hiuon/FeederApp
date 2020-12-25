@@ -409,7 +409,7 @@ def loadFeeders():
 
 	cursor = conn.cursor()
 	conn.autocommit = True
-	cursor.execute('SELECT * FROM feeders;')
+	cursor.execute('SELECT * FROM feeders order by feederid;')
 
 	feeders = []
 

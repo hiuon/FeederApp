@@ -48,7 +48,7 @@ class _AdminListViewState extends State<AdminListView> {
   void initState() {
     super.initState();
     timer = Timer.periodic(
-        Duration(seconds: 5),
+        Duration(seconds: 10),
         (Timer t) => HttpClientFeed.getUsers()
             .then((value) => users = value)
             .whenComplete(() => refresh()));
