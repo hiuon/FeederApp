@@ -100,18 +100,20 @@ class Feeder:
 		if (self.filledInternally-amount>=0):
 			self.filledInternally -= amount
 			self.filledExternally += amount
-			self.updateInDB()
+			self.updateInDBOnlyFood()
 			log("FEEDER STATE", "FEEDING OK", self.userId, self.feederId)
 		else:
+			self.filledInternally = 50
+			self.updateInDBOnlyFood
 			log("FEEDER ERROR", "FEEDING FAILED. WRONG FEED VALUE (TOO BIG)", self.userId, self.feederId)
 
 	def eat(self, amount):
 		amount = int(amount)
-		if (filledExternally-amount<0):
+		if (self.filledExternally-amount<0):
 			log("FEEDER ERROR", "EATING FAILED. WRONG EAT VALUE (TOO BIG)", self.userId, self.feederId)
 		else:
 			self.filledExternally -= amount
-			self.updateInDB()
+			self.updateInDBOnlyFood()
 			log("FEEDER STATE", "EATING OK", self.userId, self.feederId)
 
 	def currentStateToDict(self):
@@ -173,6 +175,18 @@ class Feeder:
 		cursor.close()
 		conn.close()
 		log("FEEDER UPDATE", "FEEDER UPDATED", self.userId, self.feederId)
+
+	def updateInDBOnlyFood(self):
+		conn = psycopg2.connect(dbname=db_name, user=db_user, 
+    password=db_password, host=db_host)
+		cursor = conn.cursor()
+		conn.autocommit = True
+		values = 'filledInternally='+str(self.filledInternally)+', filledExternally='+str(self.filledExternally)#='+str(self.labelsState)
+		cursor.execute(sql.SQL(
+			'UPDATE feeders SET '+values+'WHERE feeders.feederid='+str(self.feederId)+';')) 
+		cursor.close()
+		conn.close()
+		log("FEEDER SMALL UPDATE", "FEEDER UPDATED", self.userId, self.feederId)
 
 	def deleteInDB(self):
 		conn = psycopg2.connect(dbname=db_name, user=db_user, 
@@ -270,6 +284,9 @@ class User:
 		}
 	def getUserId(self):
 		return int(self.userId)
+
+	def getAllUserFeeders(self):
+		return self.feeders
 
 	def setName(self, name):
 		self.name = name

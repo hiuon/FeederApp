@@ -1,6 +1,3 @@
-import 'dart:html' as html;
-import 'dart:io';
-import 'package:dio/dio.dart' as dio;
 import 'dart:js' as js;
 
 import '../Entities/Feeder.dart';

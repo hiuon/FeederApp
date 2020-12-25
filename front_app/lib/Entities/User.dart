@@ -10,7 +10,6 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     var list = json['feeders'] as List;
-    print(list);
     return User(
         feeders: list.map((i) => Feeder.fromJson(i)).toList(),
         userId: json["id"] as int,

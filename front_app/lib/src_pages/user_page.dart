@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front_app/Entities/Logs.dart';
 import 'package:front_app/Service/http_service.dart';
-import 'package:http/http.dart' as http;
 import '../Entities/Feeder.dart';
 
 class UserPage extends StatelessWidget {
@@ -58,7 +56,7 @@ class _FeederListViewState extends State<FeederListView> {
   void initState() {
     super.initState();
     timer = Timer.periodic(
-        Duration(seconds: 5),
+        Duration(seconds: 10),
         (Timer t) => HttpClientFeed.getFeeders(userId)
             .then((value) => feeders = value)
             .whenComplete(() => refresh()));

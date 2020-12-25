@@ -1,6 +1,15 @@
 from datetime import datetime
-#тут время нужно пофиксить
-timings = ['8:00', '11:00', '13:00', '16:00', '19:00', '22:00']
+
+timings = [
+	'00:00',
+	'03:00',
+	'06:00',
+	'09:00',
+	'12:00',
+	'15:00',
+	'18:00',
+	'21:00'
+	]
 exportFilename = 'exportFile'
 
 
@@ -25,14 +34,14 @@ def decodeTimeTable(value):
 	result = ''
 	for value, index in zip(values, range(len(values))):
 		print(value, index)
-		if value=='true':
+		if value=='1':
 			result += timings[index] + ' '
 
 	return result
 
 def timeTableToFile(value):
 	global exportFilename
-	exportFilename = 'exportFile-'+str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'.txt'
+	exportFilename = 'exportFile-'+str(datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))+'.txt'
 	with open(exportFilename,'w+') as f:
 		f.write(decodeTimeTable(value))
 		f.close()
@@ -42,11 +51,11 @@ def fileToTimetable(filepath):
 		values = f.read().split(" ")
 		timeTable = ''
 		
-		for timing in timings:
-			if timing in values:
-				timeTable += 'true__'
+		for value in values:
+			if value in timings:
+				timeTable += '1__'
 			else:
-				timeTable += 'false__'
+				timeTable += '0__'
 		timeTable = timeTable[:-2]
 	return timeTable
 
@@ -97,3 +106,24 @@ def safeIntForDB(value):
 		return -1
 	else:
 		return int(value)
+
+def getCurrentHour():
+	return int(datetime.now().strftime('%H'))
+
+def getCurrentMinute():
+	return int(datetime.now().strftime('%M'))
+
+def timeForFeeding():
+	for timing in timings:
+		hour, minute = int(timing.split(":")[0]), int(timing.split(":")[1])
+
+		if getCurrentHour() == hour and getCurrentMinute() == minute:
+			return True
+	return False
+
+def needToFeed(timeTable, k):
+	feedTimings = timeTable.split("__")
+	if feedTimings[k]=='1':
+		return True 
+	else:
+		return False

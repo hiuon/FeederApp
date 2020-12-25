@@ -4,21 +4,30 @@ import utilities
 import json
 from flask import jsonify, send_from_directory
 
-
 users = loadUsers()
 feeders = loadFeeders()
 syncFeeders(users, feeders)
 
+def syncWithDB():
+	global users
+	global feeders
+	users = loadUsers()
+	feeders = loadFeeders()
+	syncFeeders(users, feeders)
+
 def getUsersListing():
+	syncWithDB()
 	global users
 	result = {"users": [user.listingView() for user in users]}
 	return jsonify(result)
 
 def getUsersCurrentState():
+	syncWithDB()
 	global users
 	return jsonify({"users" : [user.currentStateToDict() for user in users]})
 
 def addUser(request):
+	# syncWithDB()
 	global users
 
 	if 'name' in request.args:
@@ -34,6 +43,7 @@ def addUser(request):
 	   	return "User created"
 
 def getUser(userId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId() == int(userId)):
@@ -43,6 +53,7 @@ def getUser(userId):
 
 
 def changeUsername(userId, name):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId() == userId):
@@ -51,6 +62,7 @@ def changeUsername(userId, name):
 	return "User not found"
 
 def deleteUser(userId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId() == userId):
@@ -60,6 +72,7 @@ def deleteUser(userId):
 	return 'User not found'
 
 def getUserLogs(userId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId() == int(userId)):
@@ -68,6 +81,7 @@ def getUserLogs(userId):
 	return "User not found"
 
 def userRoutes(request):
+	syncWithDB()
 	if 'userId' in request.args:
 		userId = int(request.args['userId'])
 	else:
@@ -81,6 +95,7 @@ def userRoutes(request):
 		return deleteUser(userId)
 
 def userLogs(request):
+	syncWithDB()
 	global users
 	if 'userId' in request.args:
 		userId = int(request.args['userId'])
@@ -91,6 +106,7 @@ def userLogs(request):
 		return getUserLogs(userId)
 
 def getUserFeeders(userId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId()==userId):
@@ -98,6 +114,7 @@ def getUserFeeders(userId):
 	return "User not found"
 
 def addFeeder(request):
+	# syncWithDB()
 	global users
 	feeder_fields = feeder_fields = {
 	    'labels': str(request.args['labels']),
@@ -118,6 +135,7 @@ def addFeeder(request):
 	return "User not found"
 
 def changeFeeder(request):
+	# syncWithDB()
 	global users
 	feeder_fields = {
 	    'labels': str(request.args['labels']),
@@ -146,6 +164,7 @@ def changeFeeder(request):
 	return "User not found"
 
 def deleteFeeder(userId, feederId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId()==userId):
@@ -154,6 +173,7 @@ def deleteFeeder(userId, feederId):
 	return 'User not found'
 
 def feedByFeeder(userId, feederId, amount):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId()==userId):
@@ -162,6 +182,7 @@ def feedByFeeder(userId, feederId, amount):
 	return 'Feeder or user not found'
 
 def postFeederRoutes(request):
+	# syncWithDB()
 	if ('feedingAmount' in request.args and 'feederId' in request.args):
 		return feedByFeeder(int(request.args['userId']), int(request.args['feederId']), int(request.args['feedingAmount']))
 
@@ -171,6 +192,7 @@ def postFeederRoutes(request):
 		return changeFeeder(request)
 
 def feederRoutes(request):
+	syncWithDB()
 	if 'userId' in request.args:
 		userId = int(request.args['userId'])
 	else:
@@ -184,6 +206,7 @@ def feederRoutes(request):
 		return deleteFeeder(userId, int(request.args['feederId']))
 
 def exportUserLogs(userId):
+	syncWithDB()
 	global users
 	global utilities
 	for user in users:
@@ -193,6 +216,7 @@ def exportUserLogs(userId):
 	return "User or feeder not found"
 
 def exportFeederLogs(userId, feederId):
+	# syncWithDB()
 	global users
 	global utilities
 	for user in users:
@@ -202,6 +226,7 @@ def exportFeederLogs(userId, feederId):
 	return "User or feeder not found"
 
 def getFeederLogs(userId, feederId):
+	# syncWithDB()
 	global users
 	for user in users:
 		if (user.getUserId() == int(userId)):
@@ -210,6 +235,7 @@ def getFeederLogs(userId, feederId):
 	return "User or feeder not found"
 
 def feederLogs(request):
+	# syncWithDB()
 	if 'userId' in request.args and 'feederId' in request.args:
 		userId = int(request.args['userId'])
 		feederId = int(request.args['feederId'])
@@ -220,6 +246,7 @@ def feederLogs(request):
 		return getFeederLogs(userId, feederId)
 
 def exportLogs(request):
+	syncWithDB()
 	if 'userId' in request.args and 'feederId' in request.args:
 		userId = int(request.args['userId'])
 		feederId = int(request.args['feederId'])
@@ -232,6 +259,7 @@ def exportLogs(request):
 		return exportFeederLogs(userId,feederId)
 
 def getTimeTable(request):
+	syncWithDB()
 	global users
 	if 'userId' in request.args and 'feederId' in request.args:
 		userId = int(request.args['userId'])
