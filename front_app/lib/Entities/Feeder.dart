@@ -35,17 +35,7 @@ class Feeder {
         logs: log(),
         labelsState:
             fromStringToBool((json["labelsState"] as String).split("__")));
-
-    //stateLabels: onlyFalse((json["labels"] as String).split("__").length));
   }
-
-  /*static List<bool> onlyFalse(int length) {
-    List<bool> stateL = new List<bool>();
-    for (int i = 0; i < length; i++) {
-      stateL.add(false);
-    }
-    return stateL;
-  }*/
 
   static String log() {
     return "test information...........................................еуые";

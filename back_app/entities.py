@@ -13,18 +13,19 @@ db_host = 'localhost'
 #тут время нужно пофиксить
 timings = ['8:00', '11:00', '13:00', '16:00', '19:00', '22:00']
 
+def shiftedToTheLeft(text, size):
+	if len(text)!=size:
+		text += " "*(size-len(text))
+	return text
+
 def logToRow(log):
-	row = str(log['logId'])
-	row += '  '
-	row += log['logType']
-	row += '  '
-	row += log['logMessage']
-	row += '  '
-	row += str(log['userId'])
-	row += '  '
-	row += str(log['feederId'])
-	row += '  '
-	row += log['timeStamp']
+	columnLength = 15
+	row = shiftedToTheLeft(log['logId'],columnLength)
+	row += shiftedToTheLeft(log['logType'], columnLength)
+	row += shiftedToTheLeft(log['logMessage'],columnLength)
+	row += shiftedToTheLeft(str(log['userId']),columnLength)
+	row += shiftedToTheLeft(str(log['feederId']),columnLength)
+	row += shiftedToTheLeft(log['timeStamp'],columnLength)
 	return row
 
 def decodeTimeTable(value):
@@ -33,7 +34,7 @@ def decodeTimeTable(value):
 	result = ''
 	for value, index in zip(values, range(len(values))):
 		print(value, index)
-		if value=='1':
+		if value=='true':
 			result += timings[index] + ' '
 
 	return result
@@ -50,14 +51,19 @@ def fileToTimetable(filepath):
 		
 		for timing in timings:
 			if timing in values:
-				timeTable += '1__'
+				timeTable += 'true__'
 			else:
-				timeTable += '0__'
+				timeTable += 'false__'
 		timeTable = timeTable[:-2]
 	return timeTable
 
 def logsToFile(logs):
+	head = ['logId', 'logType', 'logMessage', 'userId', 'feederId', 'timeStamp']
+	row = ''
+	for item in head:
+		row += shiftedToTheLeft(item, 15)
 	with open('exportFile.txt','w+') as f:
+		f.write(row)
 		for log in logs:
 			f.write(logToRow(log)+'\n')
 		f.close()
@@ -72,7 +78,7 @@ def datetimeToStr(datetime):
 		else: 
 			result += '-0' + value
 
-	if int(value)>=10:
+	if int(datetime[3])>=10:
 		result += ' ' + datetime[3]
 	else: 
 		result += ' ' + datetime[3]

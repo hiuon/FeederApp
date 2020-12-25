@@ -209,7 +209,7 @@ def api_FeederLogs():
     return "Feeder or user not found"
 
 @app.route('/exportLogs', methods=['GET'])
-def s():
+def api_getLogs():
   global users
 
   if 'userId' in request.args and 'feederId' in request.args:
@@ -234,7 +234,7 @@ def s():
   return "User or feeder not found"
 
 @app.route('/exportTimeTables', methods=['GET'])
-def api_getLogs():
+def api_getTimeTable():
   global users
 
   if 'userId' in request.args and 'feederId' in request.args:
