@@ -1,5 +1,6 @@
 from entities import Feeder, User, loadUsers, loadFeeders, syncFeeders
 from utilities import logsToFile, timeTableToFile
+import utilities
 import json
 from flask import jsonify, send_from_directory
 
@@ -184,18 +185,20 @@ def feederRoutes(request):
 
 def exportUserLogs(userId):
 	global users
+	global utilities
 	for user in users:
 		if (userId==user.getUserId()):
 			logsToFile(user.getAllUserLogs())
-			return send_from_directory('', 'exportFile.txt', as_attachment=True)
+			return send_from_directory('', utilities.exportFilename, as_attachment=True)
 	return "User or feeder not found"
 
 def exportFeederLogs(userId, feederId):
 	global users
+	global utilities
 	for user in users:
 		if (userId==user.getUserId()):
 			logsToFile(user.getFeederById(feederId).getAllFeederLogs())
-			return send_from_directory('', 'exportFile.txt', as_attachment=True)
+			return send_from_directory('', utilities.exportFilename, as_attachment=True)
 	return "User or feeder not found"
 
 def getFeederLogs(userId, feederId):

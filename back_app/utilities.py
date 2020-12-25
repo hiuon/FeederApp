@@ -1,5 +1,8 @@
+from datetime import datetime
 #тут время нужно пофиксить
 timings = ['8:00', '11:00', '13:00', '16:00', '19:00', '22:00']
+exportFilename = 'exportFile'
+
 
 def shiftedToTheLeft(text, size):
 	if len(text)!=size:
@@ -28,7 +31,9 @@ def decodeTimeTable(value):
 	return result
 
 def timeTableToFile(value):
-	with open('exportFile.txt','w+') as f:
+	global exportFilename
+	exportFilename = 'exportFile-'+str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'.txt'
+	with open(exportFilename,'w+') as f:
 		f.write(decodeTimeTable(value))
 		f.close()
 
@@ -46,6 +51,7 @@ def fileToTimetable(filepath):
 	return timeTable
 
 def logsToFile(logs):
+	global exportFilename
 	head = ['logId', 'logType', 'logMessage', 'userId', 'feederId', 'timeStamp']
 	row = ''
 	for item in head:
@@ -53,7 +59,8 @@ def logsToFile(logs):
 			row += shiftedToTheLeft(item, 45)
 		else: 
 			row += shiftedToTheLeft(item, 20)
-	with open('exportFile.txt','w+') as f:
+	exportFilename = 'exportFile-'+str(datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))+'.txt'
+	with open(exportFilename,'w+') as f:
 		f.write(row)
 		f.write('\n')
 		for log in logs:

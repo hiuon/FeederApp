@@ -186,7 +186,6 @@ class _FeederListViewState extends State<FeederListView> {
                   alignment: Alignment.center,
                   child: Column(
                     children: [
-                      Text(feeders[index].timeTable),
                       FlatButton(
                         child: Text("Изменить расписание"),
                         color: Colors.blue,
@@ -194,19 +193,11 @@ class _FeederListViewState extends State<FeederListView> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                List<String> timeTable = [
-                                  "0",
-                                  "0",
-                                  "1",
-                                  "1",
-                                  "0",
-                                  "0",
-                                  "1",
-                                  "1"
-                                ];
                                 List<bool> timeTableBool = new List<bool>();
-                                for (int i = 0; i < timeTable.length; i++) {
-                                  if (timeTable[i] == "1") {
+                                for (int i = 0;
+                                    i < feeders[index].timeTable.length;
+                                    i++) {
+                                  if (feeders[index].timeTable[i] == "1") {
                                     timeTableBool.add(true);
                                   } else {
                                     timeTableBool.add(false);
@@ -223,6 +214,15 @@ class _FeederListViewState extends State<FeederListView> {
                                           setState(() {
                                             timeTableBool[_index] =
                                                 !timeTableBool[_index];
+                                            if (feeders[index]
+                                                    .timeTable[_index] ==
+                                                "1") {
+                                              feeders[index].timeTable[_index] =
+                                                  "0";
+                                            } else {
+                                              feeders[index].timeTable[_index] =
+                                                  "1";
+                                            }
                                           });
                                         },
                                         children: [
@@ -242,27 +242,11 @@ class _FeederListViewState extends State<FeederListView> {
                                     new FlatButton(
                                       child: Text("Изменить"),
                                       onPressed: () {
-                                        timeTable = timeTableBool.toString()
-                                            as List<String>;
-                                        print(timeTable);
-                                        http.post(
-                                            "http://localhost:5000/users/?id=" +
-                                                feeders[index]
-                                                    .userId
-                                                    .toString(),
-                                            body: {
-                                              'timeTable': timeTable
-                                            }).then((response) {
-                                          var data = json.decode(response.body);
-                                          var rest = data["feeders"] as List;
-                                          feeders = new List<Feeder>();
-                                          feeders = rest
-                                              .map<Feeder>((json) =>
-                                                  Feeder.fromJson(json))
-                                              .toList();
-                                        });
-                                        Navigator.of(context).pop();
-                                        setState(() {});
+                                        print(timeTableBool);
+                                        HttpClientFeed.changeFeeder(
+                                            Feeder.timeTableChange(
+                                                feeders[index], timeTableBool),
+                                            userId);
                                       },
                                     )
                                   ],

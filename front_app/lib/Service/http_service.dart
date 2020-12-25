@@ -1,6 +1,7 @@
 import 'dart:html' as html;
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
+import 'dart:js' as js;
 
 import '../Entities/Feeder.dart';
 import '../Entities/Logs.dart';
@@ -47,7 +48,7 @@ class HttpClientFeed {
 
   static Future<List<User>> addFeeder(int userId, String name) async {
     final response = await http.post(url +
-        "/feeders/?feederId=-1&userId=$userId&labels=&labelsState=&feederType=$name&timeTable=no&capacity=100&filledInternally=100&filledExternally=0");
+        "/feeders/?feederId=-1&userId=$userId&labels=&labelsState=&feederType=$name&timeTable=0__0__0__0__0__0__0__0&capacity=100&filledInternally=100&filledExternally=0");
     return getUsers();
   }
 
@@ -114,11 +115,13 @@ class HttpClientFeed {
             response.pipe(new File('exportLogs.txt').openWrite()))*/
 
     //http.get(url + "/exportLogs?userId=$userId&feederId=$feederId");
-    print("file download");
+    /*print("file download");
     html.AnchorElement anchorElement = html.AnchorElement(
         href: url + "/exportLogs?userId=$userId&feederId=$feederId");
     anchorElement.download =
         url + "/exportLogs?userId=$userId&feederId=$feederId";
-    anchorElement.click();
+    anchorElement.click();*/
+    js.context.callMethod(
+        'open', [url + "/exportLogs?userId=$userId&feederId=$feederId"]);
   }
 }
