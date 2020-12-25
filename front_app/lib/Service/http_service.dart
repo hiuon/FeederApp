@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'dart:html' as html;
 
 import '../Entities/Feeder.dart';
 import '../Entities/Logs.dart';
@@ -101,5 +101,13 @@ class HttpClientFeed {
       return null;
     }
     return logs;
+  }
+
+  static void downloadLogs(int userId, int feederId) {
+    html.AnchorElement anchorElement = new html.AnchorElement(
+        href: url + "/exportLogs?userId=$userId&feederId=$feederId");
+    anchorElement.download =
+        url + "/exportLogs?userId=$userId&feederId=$feederId";
+    anchorElement.click();
   }
 }

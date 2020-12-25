@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:front_app/Entities/Logs.dart';
 import 'package:http/http.dart' as http;
 import '../Entities/User.dart';
 import '../Entities/Feeder.dart';
@@ -65,12 +66,6 @@ class _AdminListViewState extends State<AdminListView> {
       users = new List<User>();
       print(data);
       users = rest.map<User>((json) => User.fromJson(json)).toList();
-      //проверка что просто все будет работать
-      for (User i in users) {
-        for (Feeder j in i.feeders) {
-          j.logs = "test information";
-        }
-      }
       setState(() {});
     });
   }
@@ -217,13 +212,13 @@ class _AdminListViewState extends State<AdminListView> {
                 margin: EdgeInsets.only(left: 20),
                 alignment: Alignment.center,
                 child: FlatButton(
-                  child: Text("Просмотреть лог\n   Пользователя"),
+                  child: Text("Эксортировать лог\n   Пользователя"),
                   textColor: Colors.white,
                   shape: new RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(30.0)),
                   color: Colors.blue,
                   onPressed: () {
-                    //HttpClientFeed.getUsers().then((value) => users = value);
+                    HttpClientFeed.downloadLogs(users[index].userId, -1);
                   },
                 ),
               ),
@@ -335,14 +330,54 @@ class _AdminListViewState extends State<AdminListView> {
               shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(30.0)),
               onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("ЛОГ"),
-                        content: Text(feeders[i].logs),
-                      );
-                    });
+                List<Log> logs;
+                HttpClientFeed.getFeederLog(userId, feeders[i].feederId)
+                    .then((value) => logs = value)
+                    .whenComplete(() => showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("ЛОГ"),
+                            content: Container(
+                                height: 400,
+                                width: 800,
+                                child: SingleChildScrollView(
+                                  child: Text(Log.logToString(logs)),
+                                )),
+                            actions: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: FlatButton(
+                                      child: Text("Export"),
+                                      color: Colors.blue,
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        HttpClientFeed.downloadLogs(
+                                            userId, feeders[i].feederId);
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(right: 20, left: 20),
+                                    child: FlatButton(
+                                      child: Text("Close"),
+                                      color: Colors.blue,
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          );
+                        }));
               },
             ),
           ),

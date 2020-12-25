@@ -296,9 +296,41 @@ class _FeederListViewState extends State<FeederListView> {
                                       child: SingleChildScrollView(
                                         child: Text(Log.logToString(logs)),
                                       )),
+                                  actions: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          child: FlatButton(
+                                            child: Text("Export"),
+                                            color: Colors.blue,
+                                            textColor: Colors.white,
+                                            onPressed: () {
+                                              HttpClientFeed.downloadLogs(
+                                                  userId,
+                                                  feeders[index].feederId);
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              right: 20, left: 20),
+                                          child: FlatButton(
+                                            child: Text("Close"),
+                                            color: Colors.blue,
+                                            textColor: Colors.white,
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 );
                               }));
-                      print(Log.logToString(logs));
                     },
                   ),
                 ),

@@ -20,7 +20,7 @@ def shiftedToTheLeft(text, size):
 
 def logToRow(log):
 	columnLength = 15
-	row = shiftedToTheLeft(log['logId'],columnLength)
+	row = shiftedToTheLeft(str(log['logId']),columnLength)
 	row += shiftedToTheLeft(log['logType'], columnLength)
 	row += shiftedToTheLeft(log['logMessage'],columnLength)
 	row += shiftedToTheLeft(str(log['userId']),columnLength)
