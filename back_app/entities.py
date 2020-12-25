@@ -238,6 +238,7 @@ class Feeder:
 		self.capacity = int(values["capacity"])
 		self.filledInternally = int(values["filledInternally"])
 		self.filledExternally = int(values["filledExternally"])
+		self.updateInDB()
 
 	def saveToDB(self):
 		conn = psycopg2.connect(dbname=db_name, user=db_user, 

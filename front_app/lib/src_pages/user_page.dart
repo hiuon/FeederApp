@@ -314,82 +314,13 @@ class _FeederListViewState extends State<FeederListView> {
                                         onPressed: () {
                                           print(time);
                                           //add food
-
-                                          http
-                                              .post(
-                                                  "http://localhost:5000/feeders/?feedingAmount=5&feederId=${feeders[index].feederId}&userId=$userId")
-                                              .then((response) {});
-                                          print("check id");
-                                          print(userId);
-                                          http
-                                              .get(
-                                                  "http://localhost:5000/users/?userId=$userId")
-                                              .then(
-                                            (response) {
-                                              var data =
-                                                  json.decode(response.body);
-                                              print(response.body);
-                                              var rest =
-                                                  data["feeders"] as List;
-                                              feeders = new List<Feeder>();
-                                              feeders = rest
-                                                  .map<Feeder>((json) =>
-                                                      Feeder.fromJson(json))
-                                                  .toList();
-                                              print(feeders);
-                                              print("labels :");
-                                              print(feeders[0].labels);
-                                              print(feeders[0].labelsState);
-                                              for (int i = 0;
-                                                  i < feeders.length;
-                                                  i++) {
-                                                feeders[i].userId = userId;
-                                                print(feeders[i].labels);
-                                                if (feeders[i].labels[0] !=
-                                                    '') {
-                                                  feeders[i].labelsState =
-                                                      new List<bool>(feeders[i]
-                                                          .labels
-                                                          .length);
-                                                  print(
-                                                      feeders[i].labels.length);
-                                                  for (int j = 0;
-                                                      j <
-                                                          feeders[i]
-                                                              .labels
-                                                              .length;
-                                                      j++) {
-                                                    feeders[i].labelsState[j] =
-                                                        false;
-                                                  }
-                                                  print("state" +
-                                                      feeders[i]
-                                                          .labelsState
-                                                          .toString());
-                                                } else {
-                                                  feeders[i].labelsState =
-                                                      new List<bool>();
-                                                  //feeders[i].stateLabels_ = new List<String>();
-                                                  feeders[i].labels =
-                                                      new List<String>();
-                                                }
-                                                /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
-          if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].labelsState.add(false);
-          } else {
-            feeders[i].labelsState.add(true);
-          }
-        }
-        for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].labelsState.add(false);
-        }
-        print(feeders[i].labelsState);
-      }*/
-                                              }
-                                              setState(() {});
-                                              Navigator.of(context).pop();
-                                            },
-                                          );
+                                          HttpClientFeed.addFood(
+                                                  feeders[index].feederId,
+                                                  feeders[index].userId,
+                                                  "5")
+                                              .then((value) => feeders = value)
+                                              .whenComplete(() => refresh());
+                                          Navigator.of(context).pop();
                                         },
                                       )
                                     ],
@@ -414,86 +345,14 @@ class _FeederListViewState extends State<FeederListView> {
                                           child: Text("Добавить"),
                                           onPressed: () {
                                             time = _c.text;
-                                            print(userId);
-                                            print(time);
-                                            http
-                                                .post(
-                                                    "http://localhost:5000/feeders/?feedingAmount=$time&feederId=${feeders[index].feederId}&userId=$userId")
-                                                .then((response) {});
-                                            print("check id");
-                                            print(userId);
-                                            http
-                                                .get(
-                                                    "http://localhost:5000/users/?userId=$userId")
+                                            HttpClientFeed.addFood(
+                                                    feeders[index].feederId,
+                                                    feeders[index].userId,
+                                                    time)
                                                 .then(
-                                              (response) {
-                                                var data =
-                                                    json.decode(response.body);
-                                                print(response.body);
-                                                var rest =
-                                                    data["feeders"] as List;
-                                                feeders = new List<Feeder>();
-                                                feeders = rest
-                                                    .map<Feeder>((json) =>
-                                                        Feeder.fromJson(json))
-                                                    .toList();
-                                                print(feeders);
-                                                print("labels :");
-                                                print(feeders[0].labels);
-                                                print(feeders[0].labelsState);
-                                                for (int i = 0;
-                                                    i < feeders.length;
-                                                    i++) {
-                                                  feeders[i].userId = userId;
-                                                  print(feeders[i].labels);
-                                                  if (feeders[i].labels[0] !=
-                                                      '') {
-                                                    feeders[i].labelsState =
-                                                        new List<bool>(
-                                                            feeders[i]
-                                                                .labels
-                                                                .length);
-                                                    print(feeders[i]
-                                                        .labels
-                                                        .length);
-                                                    for (int j = 0;
-                                                        j <
-                                                            feeders[i]
-                                                                .labels
-                                                                .length;
-                                                        j++) {
-                                                      feeders[i]
-                                                              .labelsState[j] =
-                                                          false;
-                                                    }
-                                                    print("state" +
-                                                        feeders[i]
-                                                            .labelsState
-                                                            .toString());
-                                                  } else {
-                                                    feeders[i].labelsState =
-                                                        new List<bool>();
-                                                    //feeders[i].stateLabels_ = new List<String>();
-                                                    feeders[i].labels =
-                                                        new List<String>();
-                                                  }
-                                                  /*for (int j = 0; j < feeders[i].stateLabels_.length; j++) {
-          if (feeders[i].stateLabels_[j] == "false") {
-            feeders[i].labelsState.add(false);
-          } else {
-            feeders[i].labelsState.add(true);
-          }
-        }
-        for (int j = 0; j < feeders[j].labels.length; i++) {
-          feeders[i].labelsState.add(false);
-        }
-        print(feeders[i].labelsState);
-      }*/
-                                                }
-                                                setState(() {});
-                                                Navigator.of(context).pop();
-                                              },
-                                            );
+                                                    (value) => feeders = value)
+                                                .whenComplete(() => refresh());
+                                            Navigator.of(context).pop();
                                           })
                                     ],
                                   );

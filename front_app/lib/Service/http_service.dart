@@ -79,4 +79,11 @@ class HttpClientFeed {
     final response = await http.post(url + "/feeders/?$data");
     return getFeeders(userId);
   }
+
+  static Future<List<Feeder>> addFood(
+      int feederId, int userId, String amount) async {
+    final response = await http.post(url +
+        "/feeders/?feedingAmount=$amount&feederId=$feederId&userId=$userId");
+    return getFeeders(userId);
+  }
 }
