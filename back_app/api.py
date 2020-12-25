@@ -38,7 +38,7 @@ def api_FeederLogs():
 
 @app.route('/exportLogs', methods=['GET'])
 def api_getLogs():
-  return router.feederLogs(request)
+  return router.exportLogs(request)
 
 @app.route('/exportTimeTables', methods=['GET'])
 def api_getTimeTable():

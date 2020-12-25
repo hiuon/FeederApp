@@ -1,4 +1,6 @@
 import 'dart:html' as html;
+import 'dart:io';
+import 'package:dio/dio.dart' as dio;
 
 import '../Entities/Feeder.dart';
 import '../Entities/Logs.dart';
@@ -104,7 +106,16 @@ class HttpClientFeed {
   }
 
   static void downloadLogs(int userId, int feederId) {
-    html.AnchorElement anchorElement = new html.AnchorElement(
+    /*new HttpClient()
+        .getUrl(
+            Uri.parse(url + "/exportLogs?userId=$userId&feederId=$feederId"))
+        .then((HttpClientRequest request) => request.close())
+        .then((HttpClientResponse response) =>
+            response.pipe(new File('exportLogs.txt').openWrite()))*/
+
+    //http.get(url + "/exportLogs?userId=$userId&feederId=$feederId");
+    print("file download");
+    html.AnchorElement anchorElement = html.AnchorElement(
         href: url + "/exportLogs?userId=$userId&feederId=$feederId");
     anchorElement.download =
         url + "/exportLogs?userId=$userId&feederId=$feederId";

@@ -7,10 +7,10 @@ def shiftedToTheLeft(text, size):
 	return text
 
 def logToRow(log):
-	columnLength = 15
+	columnLength = 20
 	row = shiftedToTheLeft(str(log['logId']),columnLength)
 	row += shiftedToTheLeft(log['logType'], columnLength)
-	row += shiftedToTheLeft(log['logMessage'],columnLength)
+	row += shiftedToTheLeft(log['logMessage'],45)
 	row += shiftedToTheLeft(str(log['userId']),columnLength)
 	row += shiftedToTheLeft(str(log['feederId']),columnLength)
 	row += shiftedToTheLeft(log['timeStamp'],columnLength)
@@ -49,9 +49,13 @@ def logsToFile(logs):
 	head = ['logId', 'logType', 'logMessage', 'userId', 'feederId', 'timeStamp']
 	row = ''
 	for item in head:
-		row += shiftedToTheLeft(item, 15)
+		if (item == 'logMessage'): 
+			row += shiftedToTheLeft(item, 45)
+		else: 
+			row += shiftedToTheLeft(item, 20)
 	with open('exportFile.txt','w+') as f:
 		f.write(row)
+		f.write('\n')
 		for log in logs:
 			f.write(logToRow(log)+'\n')
 		f.close()

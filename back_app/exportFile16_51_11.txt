@@ -50,3 +50,9 @@ logId               logType             logMessage                              
 527                 FEEDER STATE        FEEDING OK                                   2                   0                   2020-12-25 16:27:15.649620
 530                 FEEDER UPDATE       FEEDER UPDATED                               2                   0                   2020-12-25 16:36:39.520888
 531                 FEEDER STATE        FEEDER OWNER CHANGE                          2                   0                   2020-12-25 16:36:39.621570
+532                 FEEDER UPDATE       FEEDER UPDATED                               2                   0                   2020-12-25 16:43:20.698245
+533                 FEEDER STATE        FEEDING OK                                   2                   0                   2020-12-25 16:43:20.903305
+536                 FEEDER UPDATE       FEEDER UPDATED                               2                   0                   2020-12-25 16:47:22.828327
+537                 FEEDER STATE        FEEDER OWNER CHANGE                          2                   0                   2020-12-25 16:47:23.64161
+540                 FEEDER UPDATE       FEEDER UPDATED                               2                   0                   2020-12-25 16:49:02.191475
+541                 FEEDER STATE        FEEDER OWNER CHANGE                          2                   0                   2020-12-25 16:49:02.394233

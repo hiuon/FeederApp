@@ -27,7 +27,8 @@ class Log {
   static String logToString(List<Log> logs) {
     StringBuffer temp = new StringBuffer();
     temp.write("feederId | " +
-        "logId | " +
+        "logId" +
+        " | " +
         "logMessage | " +
         "logType | " +
         "timeStamp | " +

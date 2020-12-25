@@ -182,7 +182,7 @@ def feederRoutes(request):
 	elif request.method == 'DELETE' and 'feederId' in request.args:
 		return deleteFeeder(userId, int(request.args['feederId']))
 
-def sendUserLogs(userId):
+def exportUserLogs(userId):
 	global users
 	for user in users:
 		if (userId==user.getUserId()):
@@ -190,12 +190,20 @@ def sendUserLogs(userId):
 			return send_from_directory('', 'exportFile.txt', as_attachment=True)
 	return "User or feeder not found"
 
-def sendFeederLogs(userId, feederId):
+def exportFeederLogs(userId, feederId):
 	global users
 	for user in users:
 		if (userId==user.getUserId()):
 			logsToFile(user.getFeederById(feederId).getAllFeederLogs())
 			return send_from_directory('', 'exportFile.txt', as_attachment=True)
+	return "User or feeder not found"
+
+def getFeederLogs(userId, feederId):
+	global users
+	for user in users:
+		if (user.getUserId() == int(userId)):
+			result = {'logs' : user.getFeederById(feederId).getAllFeederLogs()}
+			return jsonify(result)
 	return "User or feeder not found"
 
 def feederLogs(request):
@@ -204,11 +212,21 @@ def feederLogs(request):
 		feederId = int(request.args['feederId'])
 	else:
 		return "Error: No id field provided. Please specify an id."
+	
+	if request.method == 'GET':
+		return getFeederLogs(userId, feederId)
+
+def exportLogs(request):
+	if 'userId' in request.args and 'feederId' in request.args:
+		userId = int(request.args['userId'])
+		feederId = int(request.args['feederId'])
+	else:
+		return "Error: No id field provided. Please specify an id."
 
 	if feederId == -1:
-		return sendUserLogs(userId)
+		return exportUserLogs(userId)
 	else:
-		return sendFeederLogs(userId,feederId)
+		return exportFeederLogs(userId,feederId)
 
 def getTimeTable(request):
 	global users
