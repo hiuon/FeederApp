@@ -205,7 +205,7 @@ def api_FeederLogs():
   if request.method == 'GET':
     for user in users:
       if (user.getUserId()==userId):
-        return jsonify(user.getFeederById(feederId).getAllFeederLogs())
+        return jsonify({"logs" : user.getFeederById(feederId).getAllFeederLogs()})
     return "Feeder or user not found"
 
 @app.route('/exportLogs', methods=['GET'])

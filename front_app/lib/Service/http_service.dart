@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import '../Entities/Feeder.dart';
+import '../Entities/Logs.dart';
 import '../Entities/User.dart';
 import '../Entities/UserLogin.dart';
 import 'package:http/http.dart' as http;
@@ -85,5 +86,20 @@ class HttpClientFeed {
     final response = await http.post(url +
         "/feeders/?feedingAmount=$amount&feederId=$feederId&userId=$userId");
     return getFeeders(userId);
+  }
+
+  static Future<List<Log>> getFeederLog(int userId, int feederId) async {
+    List<Log> logs;
+    final response =
+        await http.get(url + "/feeders/logs?userId=$userId&feederId=$feederId");
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var rest = data["logs"] as List;
+      logs = new List<Log>();
+      logs = rest.map<Log>((json) => Log.fromJson(json)).toList();
+    } else {
+      return null;
+    }
+    return logs;
   }
 }

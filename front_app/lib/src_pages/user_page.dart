@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:front_app/Entities/Logs.dart';
 import 'package:front_app/Service/http_service.dart';
 import 'package:http/http.dart' as http;
 import '../Entities/Feeder.dart';
@@ -279,14 +280,25 @@ class _FeederListViewState extends State<FeederListView> {
                     child: Text("Просмотреть лог"),
                     color: Colors.blue,
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("ЛОГ"),
-                              content: Text(feeders[index].logs),
-                            );
-                          });
+                      List<Log> logs;
+                      HttpClientFeed.getFeederLog(
+                              userId, feeders[index].feederId)
+                          .then((value) => logs = value)
+                          .whenComplete(() => showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("ЛОГ"),
+                                  content: Container(
+                                      height: 400,
+                                      width: 800,
+                                      child: SingleChildScrollView(
+                                        child: Text(Log.logToString(logs)),
+                                      )),
+                                );
+                              }));
+                      print(Log.logToString(logs));
                     },
                   ),
                 ),
