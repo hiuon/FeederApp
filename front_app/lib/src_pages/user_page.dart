@@ -120,7 +120,10 @@ class _FeederListViewState extends State<FeederListView> {
                     alignment: Alignment.center,
                     child: FlatButton(
                       child: Text("+"),
+                      textColor: Colors.white,
                       color: Colors.blue,
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
                       onLongPress: () {
                         HttpClientFeed.changeFeeder(
                                 Feeder.removeLabel(feeders[index]), userId)
@@ -181,13 +184,16 @@ class _FeederListViewState extends State<FeederListView> {
                   ],
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: 80, top: 20, bottom: 10),
+                  margin: EdgeInsets.only(left: 80, top: 40, bottom: 30),
                   alignment: Alignment.center,
                   child: Column(
                     children: [
                       FlatButton(
                         child: Text("Изменить расписание"),
+                        textColor: Colors.white,
                         color: Colors.blue,
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)),
                         onPressed: () {
                           showDialog(
                               context: context,
@@ -278,7 +284,10 @@ class _FeederListViewState extends State<FeederListView> {
                   alignment: Alignment.center,
                   child: FlatButton(
                     child: Text("Просмотреть лог"),
+                    textColor: Colors.white,
                     color: Colors.blue,
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0)),
                     onPressed: () {
                       List<Log> logs;
                       HttpClientFeed.getFeederLog(
@@ -292,7 +301,7 @@ class _FeederListViewState extends State<FeederListView> {
                                   title: Text("ЛОГ"),
                                   content: Container(
                                       height: 400,
-                                      width: 800,
+                                      width: 1200,
                                       child: SingleChildScrollView(
                                         child: Text(Log.logToString(logs)),
                                       )),
@@ -343,7 +352,10 @@ class _FeederListViewState extends State<FeederListView> {
                       Text("Добавить корм"),
                       FlatButton(
                         child: Text("+"),
+                        textColor: Colors.white,
                         color: Colors.blue,
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)),
                         onPressed: () {
                           String time;
                           if (feeders[index].feederType == "normal") {

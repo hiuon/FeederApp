@@ -1,9 +1,5 @@
 import 'dart:html';
 import 'dart:js' as js;
-import 'dart:html' as html;
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 
 import '../Entities/Feeder.dart';
 import '../Entities/Logs.dart';
